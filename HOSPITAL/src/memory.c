@@ -41,7 +41,7 @@ void destroy_shared_memory(char* name, void* ptr, int size) {
     }
     if (shm_unlink(name) == -1) {
         puts("Erro com libertação de nome de shared memory.");
-        exit(2);
+        exit(1);
     }
 }
 
