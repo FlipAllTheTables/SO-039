@@ -3,25 +3,44 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "../include/memory.h"
+#include <unistd.h>
+#include "memory.h"
 
 void* create_shared_memory(char* name, int size) {
     int shmem = shm_open(name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (shmem == -1) {
+        puts("Erro na criação de zona de memória partilhada.");
+        exit(1);
+    }
     int ftrunc = ftruncate(shmem, size);
-    return mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shmem, 0); 
+    if (ftrunc == -1) {
+        puts("Erro em truncação da zona de memória partilhada.");
+        exit(1);
+    }
+    void* mateamento = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shmem, 0);
+    if (mateamento == (void*) -1) {
+        puts("Erro em mateamento de zona de memória partilhada.");
+        exit(1);
+    }
+    return mateamento;
 }
 
 void* allocate_dynamic_memory(int size) {
+    void* dyn_memory = calloc(1, size);
+    if (dyn_memory == NULL) {
+        puts("Erro em alocação de memória.");
+        exit(1);
+    }
     return calloc(1, size);
 }
 
 void destroy_shared_memory(char* name, void* ptr, int size) {
     if (munmap(ptr, size) == -1) {
-        printf("Erro com libertação de shared memory.");
+        puts("Erro com libertação de shared memory.");
         exit(1);
     }
     if (shm_unlink(name) == -1) {
-        printf("Erro com libertação de nome de shared memory.");
+        puts("Erro com libertação de nome de shared memory.");
         exit(2);
     }
 }
