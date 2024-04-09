@@ -1,10 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
 #include "process.h"
 #include "memory.h"
 #include "main.h"
+#include "patient.h"
+#include "receptionist.h"
+#include "doctor.h"
 
 int launch_patient(int patient_id, struct data_container* data, struct communication* comm) {
     int pd = fork();
@@ -49,6 +53,6 @@ int wait_process(int process_id) {
     int result;
     waitpid(process_id, &result, 0);
     if (WIFEXITED(result)) { // Verificar se filho terminou de forma normal
-        return WEXITSTATUS(result);
+        return WEXITSTATUS(result); // Devolver 8 bits menos significativos do valor de retorno do processo
     }
 }
