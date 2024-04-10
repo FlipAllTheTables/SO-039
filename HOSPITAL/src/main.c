@@ -1,5 +1,8 @@
 #include <stdio.h>
-#include "main.h"
+#include <stdlib.h>
+
+#include "../include/main.h"
+#include "../include/memory.h"
 
 int main(int argc, char *argv[]) {
     //init data structures
@@ -22,4 +25,32 @@ int main(int argc, char *argv[]) {
     deallocate_dynamic_memory(comm->patient_receptionist);
     deallocate_dynamic_memory(comm->receptionist_doctor);
     deallocate_dynamic_memory(comm);
+}
+
+void main_args(int argc, char* argv[], struct data_container* data) {
+    if (argc != 6) { // Verificar se o número de argumentos é 6, incluindo o nome do executável hOSpital
+        puts("Número de argumentos incorreto.");
+        puts("Exemplo de utilização:\n./hOSpital max_ads buffers_size n_patients n_receptionists n_doctors");
+        exit(1);
+    }
+    // Inserir argumentos na strutura data_container
+    data->max_ads = atoi(argv[1]);
+    data->buffers_size = atoi(argv[2]);
+    data->n_patients = atoi(argv[3]);
+    data->n_receptionists = atoi(argv[4]);
+    data->n_doctors = atoi(argv[5]);
+}
+
+void allocate_dynamic_memory_buffers(struct data_container* data) {
+    // Alocar memória para pids e stats de pacientes
+    data->patient_pids = allocate_dynamic_memory(data->n_patients * sizeof(int));
+    data->patient_stats = allocate_dynamic_memory(data->n_patients * sizeof(int));
+
+    // Alocar memória para pids e stats de rececionistas
+    data->receptionist_pids = allocate_dynamic_memory(data->n_receptionists * sizeof(int));
+    data->receptionist_stats = allocate_dynamic_memory(data->n_receptionists * sizeof(int));
+
+    // Alocar memória para pids e stats de médicos
+    data->doctor_pids = allocate_dynamic_memory(data->n_doctors * sizeof(int));
+    data->doctor_stats = allocate_dynamic_memory(data->n_doctors * sizeof(int));
 }
