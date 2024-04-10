@@ -10,6 +10,10 @@
 #include "receptionist.h"
 #include "doctor.h"
 
+/* Função que inicia um novo processo Paciente através da função fork do SO. O novo
+* processo irá executar a função execute_patient respetiva, fazendo exit do retorno.
+* O processo pai devolve o pid do processo criado.
+*/
 int launch_patient(int patient_id, struct data_container* data, struct communication* comm) {
     int pd = fork();
     if (pd == -1) { // Ocorreu erro
@@ -23,6 +27,10 @@ int launch_patient(int patient_id, struct data_container* data, struct communica
     }
 }
 
+/* Função que inicia um novo processo Rececionista através da função fork do SO. O novo
+* processo irá executar a função execute_receptionist, fazendo exit do retorno.
+* O processo pai devolve o pid do processo criado.
+*/
 int launch_receptionist(int receptionist_id, struct data_container* data, struct communication* comm) {
     int pd = fork();
     if (pd == -1) { // Ocorreu erro
@@ -36,6 +44,10 @@ int launch_receptionist(int receptionist_id, struct data_container* data, struct
     }
 }
 
+/* Função que inicia um novo processo Médico através da função fork do SO. O novo
+* processo irá executar a função execute_doctor, fazendo exit do retorno.
+* O processo pai devolve o pid do processo criado.
+*/
 int launch_doctor(int doctor_id, struct data_container* data, struct communication* comm) {
     int pd = fork();
     if (pd == -1) { // Ocorreu erro
@@ -49,6 +61,9 @@ int launch_doctor(int doctor_id, struct data_container* data, struct communicati
     }
 }
 
+/* Função que espera que um processo termine através da função waitpid. 
+* Devolve o retorno do processo, se este tiver terminado normalmente.
+*/
 int wait_process(int process_id) {
     int result;
     waitpid(process_id, &result, 0);
