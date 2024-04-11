@@ -56,7 +56,23 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
 }
 
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
-    
+    // Inicializar memória partilhada de data->results e data->terminate
+    data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS);
+    data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
+
+    *data->terminate = 0;
+
+    // Inicializar memória partilhada entre main e paciente
+    comm->main_patient->buffer = create_shared_memory(STR_SHM_MAIN_PATIENT_BUFFER, data->buffers_size * sizeof(struct admission));
+    comm->main_patient->ptrs = create_shared_memory(STR_SHM_MAIN_PATIENT_PTR, sizeof(struct pointers));
+
+    // Inicializar memória partilhada entre paciente e rececionista
+    comm->patient_receptionist->buffer = create_shared_memory(STR_SHM_PATIENT_RECEPT_BUFFER, data->buffers_size * sizeof(struct admission));
+    comm->patient_receptionist->ptrs = create_shared_memory(STR_SHM_PATIENT_RECEPT_PTR, data->buffers_size * sizeof(int));
+
+    // Inicializar memória partilhada entre rececionista e médico
+    comm->receptionist_doctor->buffer = create_shared_memory(STR_SHM_RECEPT_DOCTOR_BUFFER, data->buffers_size * sizeof(struct admission));
+    comm->receptionist_doctor->ptrs = create_shared_memory(STR_SHM_RECEPT_DOCTOR_PTR, sizeof(struct pointers));
 }
 
 void launch_processes(struct data_container* data, struct communication* comm) {
