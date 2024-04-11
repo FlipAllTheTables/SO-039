@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <unistd.h>
 #include <sys/wait.h>
 
-#include "process.h"
-#include "memory.h"
-#include "main.h"
-#include "patient.h"
-#include "receptionist.h"
-#include "doctor.h"
+#include "../include/process.h"
+#include "../include/memory.h"
+#include "../include/main.h"
+#include "../include/patient.h"
+#include "../include/receptionist.h"
+#include "../include/doctor.h"
 
 int launch_patient(int patient_id, struct data_container* data, struct communication* comm) {
     int pd = fork();
