@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/main.h"
 #include "../include/memory.h"
+#include "../include/process.h"
 
 int main(int argc, char *argv[]) {
     //init data structures
@@ -56,7 +58,7 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
 }
 
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
-    // Inicializar memória partilhada de data->results e data->terminate
+    // Inicializar memória partilhada da estrutura data_container
     data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS);
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
 
@@ -87,5 +89,42 @@ void launch_processes(struct data_container* data, struct communication* comm) {
     for (int i = 0; i < data->n_doctors; i++) { // Iniciar N médicos e guardar pids em data->doctor_pids
         int pid = launch_doctor(i, data, comm);
         data->doctor_pids[i] = pid;
+    }
+}
+
+void user_interaction(struct data_container* data, struct communication* comm) {
+    int ad_counter = 0;
+
+    // Número máximo de caracteres é 5 incluíndo '\0' ("info\0" e "help\0")
+    char user_input[5];
+
+    // Lista de ações que aparece no início de executação
+    puts("[Main] Ações disponíveis:");
+    puts("[Main]  ad paciente médico - criar uma nova admissão");
+    puts("[Main]  info id - consultar o estado de duma admissão");
+    puts("[Main]  help - imprime informação sobre as ações disponíveis");
+    puts("[Main]  end - termina a executação de hOSpital\n");
+
+    while(1) { // Loop infinito até utilizador escrever "end"
+
+        // Pedir input the utilizador
+        printf("[Main] Introduzir ação: ");
+        scanf("%s", &user_input);
+
+        if (strcmp(user_input, "ad") == 0) {
+            
+        } else if (strcmp(user_input, "info") == 0) {
+
+        } else if (strcmp(user_input, "help") == 0) {
+            puts("[Main] Ações disponíveis:");
+            puts("[Main]  ad paciente médico - criar uma nova admissão");
+            puts("[Main]  info id - consultar o estado de duma admissão");
+            puts("[Main]  help - imprime informação sobre as ações disponíveis");
+            puts("[Main]  end - termina a executação de hOSpital\n");
+        } else if (strcmp(user_input, "end")) {
+
+        } else { // Comando mal formatado não existente
+            puts("[Main] Ação não reconhecida, insira 'help' para assistência");
+        }
     }
 }
