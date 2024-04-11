@@ -54,3 +54,22 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
     data->doctor_pids = allocate_dynamic_memory(data->n_doctors * sizeof(int));
     data->doctor_stats = allocate_dynamic_memory(data->n_doctors * sizeof(int));
 }
+
+void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
+    
+}
+
+void launch_processes(struct data_container* data, struct communication* comm) {
+    for (int i = 0; i < data->n_patients; i++) { // Iniciar N pacientes e guardar pids em data->patient_pids
+        int pid = launch_patient(i, data, comm);
+        data->patient_pids[i] = pid;
+    }
+    for (int i = 0; i < data->n_receptionists; i++) { // Iniciar N rececionistas e guardar pids em data->receptionists_pids
+        int pid = launch_receptionist(i, data, comm);
+        data->receptionist_pids[i] = pid;
+    }
+    for (int i = 0; i < data->n_doctors; i++) { // Iniciar N médicos e guardar pids em data->doctor_pids
+        int pid = launch_doctor(i, data, comm);
+        data->doctor_pids[i] = pid;
+    }
+}
