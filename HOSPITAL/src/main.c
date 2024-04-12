@@ -230,6 +230,31 @@ void print_status(struct data_container* data) {
 
 }
 
+void end_execution(struct data_container* data, struct communication* comm) {
+    // Por flag terminate da estrutura data para 1
+    data->terminate = 1;
+    wait_processes(data);
+    write_statistics(data);
+    destroy_memory_buffers(data, comm);
+}
+
+void wait_processes(struct data_container* data) {
+    // Para cada pid de paciente, chamar wait_process e escrever resultado no array data->pacient_stats
+    for (int i = 0; i < data->n_patients; i++) {
+        data->patient_stats[i] = wait_process(data->patient_pids[i]);
+    }
+
+    // Para cada pid de rececionista, chamar wait_process e escrever resultado no array data->receptionist_stats
+    for (int i = 0; i < data->n_receptionists; i++) {
+        data->receptionist_stats[i] = wait_process(data->receptionist_pids[i]);
+    }
+
+    // Para cada pid de médico, chamar wait_process e escrever resultado no array data->doctor_stats
+    for (int i = 0; i < data->n_receptionists; i++) {
+        data->doctor_stats[i] = wait_process(data->receptionist_pids[i]);
+    }
+}
+
 void write_statistics(struct data_container* data) {
     // Escrever número de admissões requeridas por cada paciente
     for (int i = 0; i < data->n_patients; i++) {
