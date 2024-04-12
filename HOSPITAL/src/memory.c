@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -8,6 +9,8 @@
 #include "../include/memory.h"
 
 void* create_shared_memory(char* name, int size) {
+    // TODO usar getuid()
+
     int shmem = shm_open(name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (shmem == -1) {
         puts("Erro na criação de zona de memória partilhada.");

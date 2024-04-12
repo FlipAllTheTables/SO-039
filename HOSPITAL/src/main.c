@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include "../include/main.h"
 #include "../include/memory.h"
@@ -270,4 +272,34 @@ void write_statistics(struct data_container* data) {
     for (int i = 0; i < data->n_doctors; i++) {
         printf("[Main] O médico %d requeriu %d admissões!\n", i, data->doctor_stats[i]);
     }
+}
+
+void destroy_memory_buffers(struct data_container* data, struct communication* comm) {
+    // TODO usar getuid()
+
+    // Destroir memória partilhada da estrutura communication
+    destroy_shared_memory(STR_SHM_MAIN_PATIENT_BUFFER, comm->main_patient->buffer, data->buffers_size * sizeof(struct admission));
+    destroy_shared_memory(STR_SHM_MAIN_PATIENT_PTR, comm->main_patient->ptrs, sizeof(struct pointers));
+
+    destroy_shared_memory(STR_SHM_PATIENT_RECEPT_BUFFER, comm->patient_receptionist->buffer, data->buffers_size * sizeof(struct admission));
+    destroy_shared_memory(STR_SHM_PATIENT_RECEPT_PTR, comm->patient_receptionist->ptrs, data->buffers_size * sizeof(int));
+
+    destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_BUFFER, comm->receptionist_doctor->buffer, data->buffers_size * sizeof(struct admission));
+    destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_PTR, comm->receptionist_doctor->ptrs, sizeof(struct pointers));
+
+    deallocate_dynamic_memory(comm);
+
+    // Destroir memória partilhada da estrutura data_container
+    destroy_shared_memory(strcat(STR_SHM_RESULTS, getiud()), data->results, MAX_RESULTS * sizeof(struct admission));
+    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+
+    // Libertar memória dinâmica alocada na estrutura data_container
+    deallocate_dynamic_memory(data->patient_pids);
+    deallocate_dynamic_memory(data->receptionist_pids);
+    deallocate_dynamic_memory(data->doctor_pids);
+    deallocate_dynamic_memory(data->patient_stats);
+    deallocate_dynamic_memory(data->receptionist_stats);
+    deallocate_dynamic_memory(data->doctor_stats);
+
+    deallocate_dynamic_memory(data);
 }
