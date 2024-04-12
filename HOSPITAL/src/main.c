@@ -109,11 +109,13 @@ void user_interaction(struct data_container* data, struct communication* comm) {
 
         // Pedir input the utilizador
         printf("[Main] Introduzir ação: ");
-        scanf("%s", &user_input);
+        scanf("%s", user_input);
 
         if (strcmp(user_input, "ad") == 0) {
-            
+            create_request(&ad_counter, data, comm);
+
         } else if (strcmp(user_input, "info") == 0) {
+            read_info(data);
 
         } else if (strcmp(user_input, "help") == 0) {
             puts("[Main] Ações disponíveis:");
@@ -121,10 +123,37 @@ void user_interaction(struct data_container* data, struct communication* comm) {
             puts("[Main]  info id - consultar o estado de duma admissão");
             puts("[Main]  help - imprime informação sobre as ações disponíveis");
             puts("[Main]  end - termina a executação de hOSpital\n");
+
         } else if (strcmp(user_input, "end")) {
+
 
         } else { // Comando mal formatado não existente
             puts("[Main] Ação não reconhecida, insira 'help' para assistência");
         }
     }
+}
+
+void create_request(int* ad_counter, struct data_container* data, struct communication* comm) {
+    // Obter valores de id de paciente e médico que vêm depois do comando "ad"
+    int pacient_id, doctor_id;
+    scanf("%d", &pacient_id);
+    scanf("%d", &doctor_id);
+
+    // Inicializar admissão
+    struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
+    ad->id = *ad_counter;
+    ad->requesting_patient = pacient_id;
+    ad->requested_doctor = doctor_id;
+    ad->status = 'M'; // Estado inicial de uma admissão criada por Main
+
+    // Escrever admissão na memória partilhada entre main e paciente
+    write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
+
+    // Escrever ID da admissão criada e incrementar contador de admissões
+    printf("[Main] A admissão %d foi criada!", ad_counter);
+    *ad_counter++;
+}
+
+void read_info(struct data_container* data) {
+
 }
