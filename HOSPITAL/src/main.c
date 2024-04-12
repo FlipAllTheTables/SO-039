@@ -59,7 +59,7 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
 
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
     // Inicializar memória partilhada da estrutura data_container
-    data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS);
+    data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS * sizeof(struct admission));
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
 
     *data->terminate = 0;
@@ -125,7 +125,8 @@ void user_interaction(struct data_container* data, struct communication* comm) {
             puts("[Main]  end - termina a executação de hOSpital\n");
 
         } else if (strcmp(user_input, "end")) {
-
+            puts("Fixe");
+            return;
 
         } else { // Comando mal formatado não existente
             puts("[Main] Ação não reconhecida, insira 'help' para assistência");
@@ -134,7 +135,7 @@ void user_interaction(struct data_container* data, struct communication* comm) {
 }
 
 void create_request(int* ad_counter, struct data_container* data, struct communication* comm) {
-    // Obter valores de id de paciente e médico que vêm depois do comando "ad"
+    // Obter valores de id de paciente e médico do comando "ad paciente médico"
     int pacient_id, doctor_id;
     scanf("%d", &pacient_id);
     scanf("%d", &doctor_id);
@@ -156,4 +157,25 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
 
 void read_info(struct data_container* data) {
 
+}
+
+void print_status(struct data_container* data) {
+
+}
+
+void write_statistics(struct data_container* data) {
+    // Escrever número de admissões requeridas por cada paciente
+    for (int i = 0; i < data->n_patients; i++) {
+        printf("[Main] O paciente %d requeriu %d admissões!\n", i, data->patient_stats[i]);
+    }
+
+    // Escrever número de admissões realizadas por cada rececionista
+    for (int i = 0; i < data->n_receptionists; i++) {
+        printf("[Main] O rececionista %d requeriu %d admissões!\n", i, data->receptionist_stats[i]);
+    }
+
+    // Escrever número de admissões atendidas por cada médico
+    for (int i = 0; i < data->n_doctors; i++) {
+        printf("[Main] O médico %d requeriu %d admissões!\n", i, data->doctor_stats[i]);
+    }
 }
