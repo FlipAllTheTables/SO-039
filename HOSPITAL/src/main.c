@@ -98,7 +98,7 @@ void user_interaction(struct data_container* data, struct communication* comm) {
     // Número máximo de caracteres é 5 incluíndo '\0' ("info\0" e "help\0")
     char user_input[5];
 
-    // Lista de ações que aparece no início de executação
+    // Imprimir lista de ações que aparece no início de executação
     puts("[Main] Ações disponíveis:");
     puts("[Main]  ad paciente médico - criar uma nova admissão");
     puts("[Main]  info id - consultar o estado de duma admissão");
@@ -136,21 +136,21 @@ void user_interaction(struct data_container* data, struct communication* comm) {
 
 void create_request(int* ad_counter, struct data_container* data, struct communication* comm) {
     // Obter valores de id de paciente e médico do comando "ad paciente médico"
-    int pacient_id, doctor_id;
-    scanf("%d", &pacient_id);
+    int patient_id, doctor_id;
+    scanf("%d", &patient_id);
     scanf("%d", &doctor_id);
 
     // Inicializar admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
     ad->id = *ad_counter;
-    ad->requesting_patient = pacient_id;
+    ad->requesting_patient = patient_id;
     ad->requested_doctor = doctor_id;
     ad->status = 'M'; // Estado inicial de uma admissão criada por Main
 
     // Escrever admissão na memória partilhada entre main e paciente
     write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
 
-    // Escrever ID da admissão criada e incrementar contador de admissões
+    // Imprimir ID da admissão criada e incrementar contador de admissões
     printf("[Main] A admissão %d foi criada!", ad_counter);
     *ad_counter++;
 }
@@ -160,6 +160,73 @@ void read_info(struct data_container* data) {
 }
 
 void print_status(struct data_container* data) {
+    // Imprimir número máximo de admissões e tamanho de buffers
+    printf("%d\n", data->max_ads);
+    printf("%d\n", data->buffers_size);
+
+    // Imprimir número de pacientes, rececionistas e
+    printf("%d\n", data->n_patients);
+    printf("%d\n", data->n_receptionists);
+    printf("%d\n", data->n_doctors);
+
+    // Imprimir arrays de pids de pacientes, rececionistas e médicos no formato pedido
+    printf("[");
+    for (int i = 0; i < data->n_patients; i++) {
+        printf("%d", data->patient_pids[i]);
+        if (i < data->n_patients - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("[");
+    for (int i = 0; i < data->n_receptionists; i++) {
+        printf("%d", data->receptionist_pids[i]);
+        if (i < data->n_receptionists - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("[");
+    for (int i = 0; i < data->n_doctors; i++) {
+        printf("%d", data->doctor_pids[i]);
+        if (i < data->n_doctors - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    // Imprimir arrays de stats de pacientes, rececionistas e médicos no formato pedido
+    printf("[");
+    for (int i = 0; i < data->n_patients; i++) {
+        printf("%d", data->patient_stats[i]);
+        if (i < data->n_patients - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("[");
+    for (int i = 0; i < data->n_receptionists; i++) {
+        printf("%d", data->receptionist_stats[i]);
+        if (i < data->n_receptionists - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("[");
+    for (int i = 0; i < data->n_doctors; i++) {
+        printf("%d", data->doctor_stats[i]);
+        if (i < data->n_doctors - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    // Imprimir array de admissões
+    // TODO
 
 }
 
