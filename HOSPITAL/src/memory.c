@@ -81,14 +81,14 @@ void write_receptionist_doctor_buffer(struct circular_buffer* buffer, int buffer
 }
 
 void read_main_patient_buffer(struct circular_buffer* buffer, int patient_id, int buffer_size, struct admission* ad) {
-    // Verficar que buffer não está vazio
-    if (buffer->ptrs->in != buffer->ptrs->out) {
-        *ad = buffer->buffer[buffer->ptrs->out];
-        buffer->ptrs->out++;
-    } else {
-        // buffer cheio, admission ID definido como -1
-        ad->id = -1;
+    if (buffer->ptrs->in != buffer->ptrs->out) { // Verificar que buffer circular não está vazio
+        if (buffer->buffer[buffer->ptrs->out].requesting_patient == patient_id) { // Verificar que admissão guardada é para o paciente especificado
+            *ad = buffer->buffer[buffer->ptrs->out];
+            buffer->ptrs->out = (buffer->ptrs->out + 1) % buffer_size;
+            return;
+        }
     }
+    ad->id = -1;
 }
 
 void read_patient_receptionist_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct admission* ad) {
@@ -105,12 +105,12 @@ void read_patient_receptionist_buffer(struct rnd_access_buffer* buffer, int buff
 }
 
 void read_receptionist_doctor_buffer(struct circular_buffer* buffer, int doctor_id, int buffer_size, struct admission* ad) {
-    // Verificar que buffer não está vazio
-    if (buffer->ptrs->in != buffer->ptrs->out) {
-        *ad = buffer->buffer[buffer->ptrs->out];
-        buffer->ptrs->out++;
-    } else {
-        // buffer cheio, admission ID definido como -1
-        ad->id = -1;
+    if (buffer->ptrs->in != buffer->ptrs->out) { // Verificar que buffer não está vazio
+        if (buffer->buffer[buffer->ptrs->out].requested_doctor == doctor_id) { // Verificar que admissão guardada é para o médico especificado
+            *ad = buffer->buffer[buffer->ptrs->out];
+            buffer->ptrs->out = (buffer->ptrs->out + 1) % buffer_size;
+            return;
+        }
     }
+    ad->id = -1;
 }
