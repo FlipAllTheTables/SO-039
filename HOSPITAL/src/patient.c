@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-#include "../include/patient.h"
-#include "../include/memory.h"  
+#include "patient.h"
+#include "main.h"
+#include "memory.h"  
 
 int execute_patient(int patient_id, struct data_container* data, struct communication* comm) {
     // Memória alocada para uma admissão
@@ -10,6 +11,7 @@ int execute_patient(int patient_id, struct data_container* data, struct communic
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         patient_receive_admission(ad, patient_id, data, comm);
         if (ad->id != -1) { // Verificar que id != -1
+            printf("[Patient %d] Recebi a admissão %d", patient_id, ad->id);
             patient_process_admission(ad, patient_id, data);
             patient_send_admission(ad, data, comm);
         }
@@ -30,7 +32,7 @@ void patient_receive_admission(struct admission* ad, int patient_id, struct data
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data) {
     ad->receiving_patient = patient_id;
     ad->status = 'P';
-    data->patient_stats[patient_id]++;
+    (data->patient_stats[patient_id]++);
     data->results[ad->id] = *ad;
 }
 

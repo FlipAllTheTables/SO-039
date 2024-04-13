@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "../include/main.h"
-#include "../include/memory.h"
-#include "../include/process.h"
+#include "main.h"
+#include "memory.h"
+#include "process.h"
 
 int main(int argc, char *argv[]) {
     //init data structures
@@ -38,7 +38,11 @@ void main_args(int argc, char* argv[], struct data_container* data) {
         exit(1);
     }
     // Inserir argumentos na strutura data_container
-    data->max_ads = atoi(argv[1]);
+    if (atoi(argv[1]) > MAX_RESULTS) {
+        data->max_ads = MAX_RESULTS;
+    } else {
+        data->max_ads = atoi(argv[1]);
+    }
     data->buffers_size = atoi(argv[2]);
     data->n_patients = atoi(argv[3]);
     data->n_receptionists = atoi(argv[4]);
@@ -61,7 +65,7 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
 
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
     // Inicializar memória partilhada da estrutura data_container
-    data->results = create_shared_memory(STR_SHM_RESULTS, MAX_RESULTS * sizeof(struct admission));
+    data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ads * sizeof(struct admission));
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
 
     *data->terminate = 0;
@@ -97,13 +101,14 @@ void launch_processes(struct data_container* data, struct communication* comm) {
 void user_interaction(struct data_container* data, struct communication* comm) {
     int ad_counter = 0;
 
-    // Número máximo de caracteres é 5 incluíndo '\0' ("info\0" e "help\0")
-    char user_input[5];
+    // String que guarda o input do utilizador
+    char user_input[10];
 
     // Imprimir lista de ações que aparece no início de executação
     puts("[Main] Ações disponíveis:");
     puts("[Main]  ad paciente médico - criar uma nova admissão");
     puts("[Main]  info id - consultar o estado de duma admissão");
+    puts("[Main]  status – apresentar o estado atual");
     puts("[Main]  help - imprime informação sobre as ações disponíveis");
     puts("[Main]  end - termina a executação de hOSpital\n");
 
@@ -119,15 +124,19 @@ void user_interaction(struct data_container* data, struct communication* comm) {
         } else if (strcmp(user_input, "info") == 0) {
             read_info(data);
 
+        } else if (strcmp(user_input, "status") == 0) {
+            print_status(data);
+
         } else if (strcmp(user_input, "help") == 0) {
             puts("[Main] Ações disponíveis:");
             puts("[Main]  ad paciente médico - criar uma nova admissão");
             puts("[Main]  info id - consultar o estado de duma admissão");
+            puts("[Main]  status - apresentar o estado atual");
             puts("[Main]  help - imprime informação sobre as ações disponíveis");
             puts("[Main]  end - termina a executação de hOSpital\n");
 
-        } else if (strcmp(user_input, "end")) {
-            puts("Fixe");
+        } else if (strcmp(user_input, "end") == 0) {
+            end_execution(data, comm);
             return;
 
         } else { // Comando mal formatado não existente
@@ -153,26 +162,58 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
 
     // Imprimir ID da admissão criada e incrementar contador de admissões
-    printf("[Main] A admissão %d foi criada!", *ad_counter);
-    *ad_counter++;
+    printf("[Main] A admissão %d foi criada!\n", ad->id);
+    data->results[ad->id] = *ad;
+    (*ad_counter)++;
+    deallocate_dynamic_memory(ad);
 }
 
 void read_info(struct data_container* data) {
+    // Obter valor de id da admissão pedida pelo utilizador
+    int ad_id;
+    scanf("%d", &ad_id);
 
+    // Imprimir mensagem de estado na consola. Mensagem diferente dependendo do estado da admissão
+    if (ad_id < data->max_ads) {
+        if (data->results[ad_id].id == ad_id) {
+            char status = data->results[ad_id].status;
+            printf("[Main] A admissão %d com estado %c requisitada pelo paciente %d ao médico %d", ad_id, status, data->results[ad_id].requesting_patient, data->results[ad_id].requested_doctor);
+            if (status == 'M') {
+                printf(", foi enviada ao paciente");
+            } else {
+                printf(", foi recebida pelo paciente %d", data->results[ad_id].receiving_patient);
+                if (status == 'P') {
+                    printf(", e enviada ao rececionista");
+                } else {
+                    printf(", admitida pelo rececionista %d", data->results[ad_id].receiving_receptionist);
+                    if (status == 'R') {
+                        printf(", e enviada ao médico");
+                    } else {
+                        printf(", e concluída pelo médico %d", data->results[ad_id].receiving_doctor);
+                    }
+                }
+            }
+        } else {
+            printf("[Main] A admissão %d ainda não existe", ad_id);
+        }
+    } else {
+        printf("[Main] A admissão %d possui um id maior ou igual ao máximo de atendimentos previstos para a execução (%d)", ad_id, data->max_ads);
+    }
+    printf("!\n");
 }
 
 void print_status(struct data_container* data) {
     // Imprimir número máximo de admissões e tamanho de buffers
-    printf("%d\n", data->max_ads);
-    printf("%d\n", data->buffers_size);
+    printf("[Main] max_ads: %d\n", data->max_ads);
+    printf("[Main] buffers_size: %d\n", data->buffers_size);
 
     // Imprimir número de pacientes, rececionistas e
-    printf("%d\n", data->n_patients);
-    printf("%d\n", data->n_receptionists);
-    printf("%d\n", data->n_doctors);
+    printf("[Main] n_patients: %d\n", data->n_patients);
+    printf("[Main] n_receptionists: %d\n", data->n_receptionists);
+    printf("[Main] n_doctors: %d\n", data->n_doctors);
 
     // Imprimir arrays de pids de pacientes, rececionistas e médicos no formato pedido
-    printf("[");
+    printf("[Main] patient_pids: [");
     for (int i = 0; i < data->n_patients; i++) {
         printf("%d", data->patient_pids[i]);
         if (i < data->n_patients - 1) {
@@ -181,7 +222,7 @@ void print_status(struct data_container* data) {
     }
     printf("]\n");
 
-    printf("[");
+    printf("[Main] receptionist_pids: [");
     for (int i = 0; i < data->n_receptionists; i++) {
         printf("%d", data->receptionist_pids[i]);
         if (i < data->n_receptionists - 1) {
@@ -190,7 +231,7 @@ void print_status(struct data_container* data) {
     }
     printf("]\n");
 
-    printf("[");
+    printf("[Main] doctor_pids: [");
     for (int i = 0; i < data->n_doctors; i++) {
         printf("%d", data->doctor_pids[i]);
         if (i < data->n_doctors - 1) {
@@ -200,7 +241,7 @@ void print_status(struct data_container* data) {
     printf("]\n");
 
     // Imprimir arrays de stats de pacientes, rececionistas e médicos no formato pedido
-    printf("[");
+    printf("[Main] patient_stats: [");
     for (int i = 0; i < data->n_patients; i++) {
         printf("%d", data->patient_stats[i]);
         if (i < data->n_patients - 1) {
@@ -209,7 +250,7 @@ void print_status(struct data_container* data) {
     }
     printf("]\n");
 
-    printf("[");
+    printf("[Main] receptionist_stats: [");
     for (int i = 0; i < data->n_receptionists; i++) {
         printf("%d", data->receptionist_stats[i]);
         if (i < data->n_receptionists - 1) {
@@ -218,7 +259,7 @@ void print_status(struct data_container* data) {
     }
     printf("]\n");
 
-    printf("[");
+    printf("[Main] doctor_stats [");
     for (int i = 0; i < data->n_doctors; i++) {
         printf("%d", data->doctor_stats[i]);
         if (i < data->n_doctors - 1) {
@@ -227,8 +268,18 @@ void print_status(struct data_container* data) {
     }
     printf("]\n");
 
-    // Imprimir array de admissões
-    // TODO
+    // Imprimir array de IDs de admissões
+    printf("[Main] results: [");
+    for (int i = 0; i < data->max_ads; i++) {
+        printf("%d", data->results[i].id);
+        if (i < data->max_ads - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    // Imprimir estado terminate
+    printf("[Main] terminate: %d\n\n", *data->terminate);
 
 }
 
@@ -287,8 +338,6 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
     destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_BUFFER, comm->receptionist_doctor->buffer, data->buffers_size * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_PTR, comm->receptionist_doctor->ptrs, sizeof(struct pointers));
 
-    deallocate_dynamic_memory(comm);
-
     // Destroir memória partilhada da estrutura data_container
     destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
@@ -300,6 +349,4 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
     deallocate_dynamic_memory(data->patient_stats);
     deallocate_dynamic_memory(data->receptionist_stats);
     deallocate_dynamic_memory(data->doctor_stats);
-
-    deallocate_dynamic_memory(data);
 }

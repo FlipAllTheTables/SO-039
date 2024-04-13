@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-#include "../include/doctor.h"
-#include "../include/memory.h"
+#include "doctor.h"
+#include "main.h"
+#include "memory.h"
 
 int execute_doctor(int doctor_id, struct data_container* data, struct communication* comm) {
     // Memória alocada para uma admissão
@@ -10,6 +11,7 @@ int execute_doctor(int doctor_id, struct data_container* data, struct communicat
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         doctor_receive_admission(ad, doctor_id, data, comm);
         if (ad->id != -1) {
+            printf("[Doctor %d] Recebi a admissão %d", doctor_id, ad->id);
             doctor_process_admission(ad, doctor_id, data);
         }
     }

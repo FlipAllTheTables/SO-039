@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "../include/memory.h"
+#include "memory.h"
 
 void* create_shared_memory(char* name, int size) {
     // TODO usar getuid()

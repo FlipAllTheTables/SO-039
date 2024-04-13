@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-#include "../include/receptionist.h"
-#include "../include/memory.h"
+#include "receptionist.h"
+#include "main.h"
+#include "memory.h"
 
 int execute_receptionist(int receptionist_id, struct data_container* data, struct communication* comm) {
     // Memória alocada para uma admissão
@@ -10,6 +11,7 @@ int execute_receptionist(int receptionist_id, struct data_container* data, struc
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         receptionist_receive_admission(ad, data, comm);
         if (ad->id != -1) { // Verificar que id != -1
+            printf("[Receptionist %d] Recebi a admissão %d", receptionist_id, ad->id);
             receptionist_process_admission(ad, receptionist_id, data);
             receptionist_send_admission(ad, data, comm);
         }
