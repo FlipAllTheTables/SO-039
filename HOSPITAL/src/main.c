@@ -153,7 +153,7 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
 
     // Imprimir ID da admissão criada e incrementar contador de admissões
-    printf("[Main] A admissão %d foi criada!", ad_counter);
+    printf("[Main] A admissão %d foi criada!", *ad_counter);
     *ad_counter++;
 }
 
@@ -234,7 +234,7 @@ void print_status(struct data_container* data) {
 
 void end_execution(struct data_container* data, struct communication* comm) {
     // Por flag terminate da estrutura data para 1
-    data->terminate = 1;
+    *data->terminate = 1;
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, comm);
@@ -290,7 +290,7 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
     deallocate_dynamic_memory(comm);
 
     // Destroir memória partilhada da estrutura data_container
-    destroy_shared_memory(strcat(STR_SHM_RESULTS, getiud()), data->results, MAX_RESULTS * sizeof(struct admission));
+    destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
 
     // Libertar memória dinâmica alocada na estrutura data_container

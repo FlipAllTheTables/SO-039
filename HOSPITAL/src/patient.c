@@ -7,10 +7,12 @@ int execute_patient(int patient_id, struct data_container* data, struct communic
     // Memória alocada para uma admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
 
-    while (data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
+    while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         patient_receive_admission(ad, patient_id, data, comm);
-        patient_process_admission(ad, patient_id, data);
-        patient_send_admission(ad, data, comm);
+        if (ad->id != -1) { // Verificar que id != -1
+            patient_process_admission(ad, patient_id, data);
+            patient_send_admission(ad, data, comm);
+        }
     }
 
     // Dealocar memória na estrutura admission
@@ -19,16 +21,17 @@ int execute_patient(int patient_id, struct data_container* data, struct communic
 }
 
 void patient_receive_admission(struct admission* ad, int patient_id, struct data_container* data, struct communication* comm) {
-    if (data->terminate == 1) {
+    if (*data->terminate == 1) {
         return;
     }
-    read_main_patient_buffer(comm->main_patient->buffer, patient_id, data->buffers_size, ad);
+    read_main_patient_buffer(comm->main_patient, patient_id, data->buffers_size, ad);
 }
 
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data) {
     ad->receiving_patient = patient_id;
     ad->status = 'P';
     data->patient_stats[patient_id]++;
+    data->results[ad->id] = *ad;
 }
 
 void patient_send_admission(struct admission* ad, struct data_container* data, struct communication* comm) {

@@ -56,4 +56,5 @@ int wait_process(int process_id) {
     if (WIFEXITED(result)) { // Verificar se filho terminou de forma normal
         return WEXITSTATUS(result); // Devolver 8 bits menos significativos do valor de retorno do processo
     }
+    return -1;
 }
