@@ -1,3 +1,9 @@
+/*  Grupo 039
+ * Rafael Ribeiro   - 58193
+ * Pedro Duque      - 52753
+ * Francisco Santos - 59871
+*/ 
+
 #include <stdio.h>
 
 #include "receptionist.h"
@@ -11,7 +17,7 @@ int execute_receptionist(int receptionist_id, struct data_container* data, struc
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         receptionist_receive_admission(ad, data, comm);
         if (ad->id != -1) { // Verificar que id != -1
-            printf("[Receptionist %d] Recebi a admissão %d", receptionist_id, ad->id);
+            printf("[Receptionist %d] Recebi a admissão %d!\n", receptionist_id, ad->id);
             receptionist_process_admission(ad, receptionist_id, data);
             receptionist_send_admission(ad, data, comm);
         }

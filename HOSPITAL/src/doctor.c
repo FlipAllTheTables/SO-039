@@ -1,3 +1,9 @@
+/*  Grupo 039
+ * Rafael Ribeiro   - 58193
+ * Pedro Duque      - 52753
+ * Francisco Santos - 59871
+*/ 
+
 #include <stdio.h>
 
 #include "doctor.h"
@@ -11,7 +17,7 @@ int execute_doctor(int doctor_id, struct data_container* data, struct communicat
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
         doctor_receive_admission(ad, doctor_id, data, comm);
         if (ad->id != -1) {
-            printf("[Doctor %d] Recebi a admissão %d", doctor_id, ad->id);
+            printf("[Doctor %d] Recebi a admissão %d!\n", doctor_id, ad->id);
             doctor_process_admission(ad, doctor_id, data);
         }
     }
