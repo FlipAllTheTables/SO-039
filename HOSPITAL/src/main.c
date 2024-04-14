@@ -72,6 +72,11 @@ void allocate_dynamic_memory_buffers(struct data_container* data) {
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
     // Inicializar memória partilhada da estrutura data_container
     data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ads * sizeof(struct admission));
+    // Certificar que todas as admissões dentro de results começam com id = -1
+    for (int i = 0; i < data->max_ads; i++) {
+        data->results[i].id = -1;
+    }
+
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
 
     *data->terminate = 0;
@@ -153,22 +158,26 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     int patient_id, doctor_id;
     scanf("%d", &patient_id);
     scanf("%d", &doctor_id);
+    if (*ad_counter < data->max_ads) { // Verificar que ainda pode ser criada uma admissão
+        printf("[Main] A criar a admissão %d para o paciente %d destinada ao médico %d!\n", *ad_counter, patient_id, doctor_id);
+        // Inicializar admissão
+        struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
+        ad->id = *ad_counter;
+        ad->requesting_patient = patient_id;
+        ad->requested_doctor = doctor_id;
+        ad->status = 'M'; // Estado inicial de uma admissão criada por Main
 
-    // Inicializar admissão
-    struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
-    ad->id = *ad_counter;
-    ad->requesting_patient = patient_id;
-    ad->requested_doctor = doctor_id;
-    ad->status = 'M'; // Estado inicial de uma admissão criada por Main
+        // Escrever admissão na memória partilhada entre main e paciente
+        write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
 
-    // Escrever admissão na memória partilhada entre main e paciente
-    write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
-
-    // Imprimir ID da admissão criada e incrementar contador de admissões
-    printf("[Main] A admissão %d foi criada!\n", ad->id);
-    data->results[ad->id] = *ad;
-    (*ad_counter)++;
-    deallocate_dynamic_memory(ad);
+        // Imprimir ID da admissão criada e incrementar contador de admissões
+        printf("[Main] A admissão %d foi criada!\n", ad->id);
+        data->results[ad->id] = *ad;
+        (*ad_counter)++;
+        deallocate_dynamic_memory(ad);
+    } else { // Número máximo de admissões alcançado, não se cria uma admissão nova
+        puts("[Main] O número máximo de admissões foi alcançado!");
+    }
 }
 
 void read_info(struct data_container* data) {
@@ -347,9 +356,9 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
 
     // Libertar memória dinâmica alocada na estrutura data_container
     deallocate_dynamic_memory(data->patient_pids);
-    deallocate_dynamic_memory(data->receptionist_pids);
-    deallocate_dynamic_memory(data->doctor_pids);
     deallocate_dynamic_memory(data->patient_stats);
+    deallocate_dynamic_memory(data->receptionist_pids);
     deallocate_dynamic_memory(data->receptionist_stats);
+    deallocate_dynamic_memory(data->doctor_pids);
     deallocate_dynamic_memory(data->doctor_stats);
 }

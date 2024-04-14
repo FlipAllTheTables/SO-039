@@ -41,7 +41,7 @@ void* allocate_dynamic_memory(int size) {
         puts("Erro em alocação de memória.");
         exit(1);
     }
-    return calloc(1, size);
+    return dyn_memory;
 }
 
 void destroy_shared_memory(char* name, void* ptr, int size) {

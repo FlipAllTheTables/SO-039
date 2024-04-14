@@ -36,7 +36,11 @@ void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_c
 
 void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data) {
     ad->receiving_doctor = doctor_id;
-    ad->status = 'A';
-    data->doctor_stats[doctor_id]++;
+    if (ad->id < data->max_ads) { // Se admissão não estiver acima do limite diário, incrementar contador e inserir estado 'A'
+        ad->status = 'A';
+        data->doctor_stats[doctor_id]++;
+    } else { // Caso contrário inserir estado N e não incrementar contador
+        ad->status = 'N';
+    }
     data->results[ad->id] = *ad;
 }
