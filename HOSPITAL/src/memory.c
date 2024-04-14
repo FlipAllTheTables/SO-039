@@ -63,7 +63,7 @@ void write_main_patient_buffer(struct circular_buffer* buffer, int buffer_size, 
     // Verificar que buffer não está cheio
     if ((buffer->ptrs->in + 1) % buffer_size != buffer->ptrs->out) {
         buffer->buffer[buffer->ptrs->in] = *ad;
-        buffer->ptrs->in++;
+        buffer->ptrs->in = (buffer->ptrs->in + 1) % buffer_size;
     }
 }
 
@@ -72,7 +72,7 @@ void write_patient_receptionist_buffer(struct rnd_access_buffer* buffer, int buf
     for (int i = 0; i < buffer_size; i++) {
         if (buffer->ptrs[i] == 0) {
             buffer->buffer[i] = *ad;
-            buffer->ptrs[i] == 1;
+            buffer->ptrs[i] = 1;
             return;
         }
     }
@@ -82,7 +82,7 @@ void write_receptionist_doctor_buffer(struct circular_buffer* buffer, int buffer
     // Verificar que buffer não está cheio
     if ((buffer->ptrs->in + 1) % buffer_size != buffer->ptrs->out) {
         buffer->buffer[buffer->ptrs->in] = *ad;
-        buffer->ptrs->in++;
+        buffer->ptrs->in = (buffer->ptrs->in + 1) % buffer_size;
     }
 }
 
@@ -102,7 +102,7 @@ void read_patient_receptionist_buffer(struct rnd_access_buffer* buffer, int buff
     for (int i = 0; i < buffer_size; i++) {
         if (buffer->ptrs[i] == 1) {
             *ad = buffer->buffer[i];
-            buffer->ptrs[i] == 0;
+            buffer->ptrs[i] = 0;
             return;
         }
     }

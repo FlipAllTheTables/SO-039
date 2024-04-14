@@ -24,14 +24,14 @@ int execute_doctor(int doctor_id, struct data_container* data, struct communicat
 
     // Dealocar memória na estrutura admission
     deallocate_dynamic_memory(ad);
-    return data->patient_stats[doctor_id];
+    return data->doctor_stats[doctor_id];
 }
 
 void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_container* data, struct communication* comm) {
     if (*data->terminate == 1) {
         return;
     }
-    read_main_patient_buffer(comm->main_patient, doctor_id, data->buffers_size, ad);
+    read_receptionist_doctor_buffer(comm->receptionist_doctor, doctor_id, data->buffers_size, ad);
 }
 
 void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data) {

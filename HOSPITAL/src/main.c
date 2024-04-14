@@ -91,16 +91,13 @@ void create_shared_memory_buffers(struct data_container* data, struct communicat
 
 void launch_processes(struct data_container* data, struct communication* comm) {
     for (int i = 0; i < data->n_patients; i++) { // Iniciar N pacientes e guardar pids em data->patient_pids
-        int pid = launch_patient(i, data, comm);
-        data->patient_pids[i] = pid;
+        data->patient_pids[i] = launch_patient(i, data, comm);
     }
     for (int i = 0; i < data->n_receptionists; i++) { // Iniciar N rececionistas e guardar pids em data->receptionists_pids
-        int pid = launch_receptionist(i, data, comm);
-        data->receptionist_pids[i] = pid;
+        data->receptionist_pids[i] = launch_receptionist(i, data, comm);
     }
     for (int i = 0; i < data->n_doctors; i++) { // Iniciar N médicos e guardar pids em data->doctor_pids
-        int pid = launch_doctor(i, data, comm);
-        data->doctor_pids[i] = pid;
+        data->doctor_pids[i] = launch_doctor(i, data, comm);
     }
 }
 
@@ -114,7 +111,7 @@ void user_interaction(struct data_container* data, struct communication* comm) {
     puts("[Main] Ações disponíveis:");
     puts("[Main]  ad paciente médico - criar uma nova admissão");
     puts("[Main]  info id - consultar o estado de duma admissão");
-    puts("[Main]  status – apresentar o estado atual");
+    puts("[Main]  status - apresentar o estado atual");
     puts("[Main]  help - imprime informação sobre as ações disponíveis");
     puts("[Main]  end - termina a executação de hOSpital\n");
 
@@ -309,8 +306,8 @@ void wait_processes(struct data_container* data) {
     }
 
     // Para cada pid de médico, chamar wait_process e escrever resultado no array data->doctor_stats
-    for (int i = 0; i < data->n_receptionists; i++) {
-        data->doctor_stats[i] = wait_process(data->receptionist_pids[i]);
+    for (int i = 0; i < data->n_doctors; i++) {
+        data->doctor_stats[i] = wait_process(data->doctor_pids[i]);
     }
 }
 

@@ -38,7 +38,7 @@ void patient_receive_admission(struct admission* ad, int patient_id, struct data
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data) {
     ad->receiving_patient = patient_id;
     ad->status = 'P';
-    (data->patient_stats[patient_id]++);
+    data->patient_stats[patient_id]++;
     data->results[ad->id] = *ad;
 }
 
