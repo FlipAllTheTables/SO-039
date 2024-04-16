@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "main.h": "c",
+        "typeinfo": "c",
+        "process.h": "c",
+        "memory.h": "c",
+        "receptionist.h": "c",
+        "patient.h": "c",
+        "doctor.h": "c",
+        "stdio.h": "c"
+    }
+}
