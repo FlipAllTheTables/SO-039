@@ -6,13 +6,14 @@
 #ifndef CONFIGURATION_H_GUARD
 #define CONFIGURATION_H_GUARD
 
-#include <stdio.h>
+#define MAXLINESIZE 256
 
-#include "memory.h"
+#include "main.h"
 
-/* Função que abre o ficheiro de configuração inicial, recebendo um pointer um
-* para o qual este é carregado, e o caminho do correspondente
+/* Função que abre o ficheiro de configuração passado como argumento, e
+* guarda os valores escritos dentro do ficheiro de configuração nos campos
+* apropriados da estrutura data_container
 */
-void openConfigFile(FILE* stream, char* filePath);
+void read_config_information(char* file_path, struct data_container* data);
 
 #endif
