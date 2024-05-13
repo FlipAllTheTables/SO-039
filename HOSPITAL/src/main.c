@@ -22,19 +22,30 @@ int main(int argc, char *argv[]) {
     comm->patient_receptionist = allocate_dynamic_memory(sizeof(struct rnd_access_buffer));
     comm->receptionist_doctor = allocate_dynamic_memory(sizeof(struct circular_buffer));
 
+    // init semaphore data structure
+    struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
+    sems->main_patient = create_dynamic_memory(sizeof(struct prodcons));
+    sems->patient_receptionist = create_dynamic_memory(sizeof(struct prodcons));
+    sems->receptionist_doctor = create_dynamic_memory(sizeof(struct prodcons));
+
     //execute main code
     main_args(argc, argv, data);
     allocate_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, comm);
-    launch_processes(data, comm);
-    user_interaction(data, comm);
-    
+    create_semaphores(data, sems);
+    launch_processes(data, comm, sems);
+    user_interaction(data, comm, sems);
+
     //release memory before terminating
     deallocate_dynamic_memory(data);
     deallocate_dynamic_memory(comm->main_patient);
     deallocate_dynamic_memory(comm->patient_receptionist);
     deallocate_dynamic_memory(comm->receptionist_doctor);
     deallocate_dynamic_memory(comm);
+    destroy_dynamic_memory(sems->main_patient);
+    destroy_dynamic_memory(sems-> patient_receptionist);
+    destroy_dynamic_memory(sems-> receptionist_doctor);
+    destroy_dynamic_memory(sems);
 }
 
 void main_args(int argc, char* argv[], struct data_container* data) {
