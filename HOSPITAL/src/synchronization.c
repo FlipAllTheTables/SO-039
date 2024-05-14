@@ -5,6 +5,7 @@
 */ 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <semaphore.h>
 #include <fcntl.h>
 
@@ -25,7 +26,7 @@ void semaphore_destroy(char* name, sem_t* semaphore) {
         puts("Erro sem_close.");
         exit(1);
     }
-    if (sem_destroy(name) == -1) {
+    if (sem_destroy(semaphore) == -1) {
         puts("Erro sem_destroy.");
         exit(1);
     }
