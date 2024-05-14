@@ -47,5 +47,6 @@ void print_admission_statistics(FILE* stats_file, struct admission* ad) {
     fprintf(stats_file, "Status: %c\n", ad->status);
     fprintf(stats_file, "Patient id: %d\n", ad->receiving_patient);
     fprintf(stats_file, "Receptionist id: %d\n", ad->receiving_receptionist);
-    fprintf(stats_file, "Doctor id: %d\n\n", ad->receiving_doctor);
+    fprintf(stats_file, "Doctor id: %d\n", ad->receiving_doctor);
+    fputs("\n", stats_file);
 }
