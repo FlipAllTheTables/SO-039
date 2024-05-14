@@ -3,7 +3,7 @@
 # Pedro Duque		- 52753
 # Francisco Santos	- 59871
 
-OBJECTS = configuration.o doctor.o main.o memory.o patient.o process.o receptionist.o synchronization.o
+OBJECTS = configuration.o doctor.o main.o memory.o patient.o process.o receptionist.o stats.o synchronization.o
 
 BIN_DIR = bin
 INC_DIR = include
@@ -12,11 +12,12 @@ SRC_DIR = src
 
 configuration.o = configuration.h main.h
 doctor.o = doctor.h main.h memory.h
-main.o = main.h memory.h process.h
+main.o = main.h memory.h process.h stats.h
 memory.o = memory.h
 patient.o = main.h memory.h patient.h
 process.o = process.h memory.h main.h patient.h receptionist.h doctor.h
 receptionist.o = main.h memory.h receptionist.h
+stats.o = main.h memory.h stats.h
 synchronization.o = synchronization.h
 
 CFLAGS = -Wall -I $(INC_DIR) -g
