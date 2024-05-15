@@ -381,9 +381,15 @@ void create_semaphores(struct data_container* data, struct semaphores* sems) {
 }
 
 void wakeup_processes(struct data_container* data, struct semaphores* sems) {
-    produce_end(sems->main_patient);
-    produce_end(sems->patient_receptionist);
-    produce_end(sems->receptionist_doctor);
+    for (int i = 0; i < data->n_patients; i++) {
+        produce_end(sems->main_patient);
+    }
+    for (int i = 0; i < data->n_receptionists; i++) {
+        produce_end(sems->patient_receptionist);
+    }
+    for (int i = 0; i < data->n_doctors; i++) {
+        produce_end(sems->receptionist_doctor);
+    }
 }
 
 void destroy_semaphores(struct semaphores* sems) {
