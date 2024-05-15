@@ -3,15 +3,16 @@
 # Pedro Duque		- 52753
 # Francisco Santos	- 59871
 
-OBJECTS = doctor.o main.o memory.o patient.o process.o receptionist.o synchronization.o
+OBJECTS = configuration.o doctor.o main.o memory.o patient.o process.o receptionist.o synchronization.o
 
 BIN_DIR = bin
 INC_DIR = include
 OBJ_DIR = obj
 SRC_DIR = src
 
+configuration.o = configuration.h main.h
 doctor.o = doctor.h main.h memory.h synchronization.h
-main.o = main.h memory.h process.h synchronization.h
+main.o = configuration.h main.h memory.h process.h synchronization.h
 memory.o = memory.h
 patient.o = main.h memory.h patient.h synchronization.h
 process.o = doctor.h main.h memory.h patient.h process.h receptionist.h

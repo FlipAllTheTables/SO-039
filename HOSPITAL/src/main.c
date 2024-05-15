@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#include "configuration.h"
 #include "main.h"
 #include "memory.h"
 #include "process.h"
@@ -50,21 +51,12 @@ int main(int argc, char *argv[]) {
 }
 
 void main_args(int argc, char* argv[], struct data_container* data) {
-    if (argc != 6) { // Verificar se o número de argumentos é 6, incluindo o nome do executável hOSpital
-        puts("Número de argumentos incorreto.");
-        puts("Exemplo de utilização:\n./hOSpital max_ads buffers_size n_patients n_receptionists n_doctors");
+    if (argc != 2) { // Verificar se o número de argumentos é 2, incluindo o nome do executável hOSpital
+        puts("Número de argumentos incorreto. Exemplo de utilização:\n./hOSpital config.txt");
         exit(1);
     }
     // Inserir argumentos na strutura data_container
-    if (atoi(argv[1]) > MAX_RESULTS) {
-        data->max_ads = MAX_RESULTS;
-    } else {
-        data->max_ads = atoi(argv[1]);
-    }
-    data->buffers_size = atoi(argv[2]);
-    data->n_patients = atoi(argv[3]);
-    data->n_receptionists = atoi(argv[4]);
-    data->n_doctors = atoi(argv[5]);
+    read_config_information(argv[1], data);
 }
 
 void allocate_dynamic_memory_buffers(struct data_container* data) {
