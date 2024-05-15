@@ -33,7 +33,9 @@ void patient_receive_admission(struct admission* ad, int patient_id, struct data
     if (*data->terminate == 1) {
         return;
     }
+    consume_begin(sems->main_patient);
     read_main_patient_buffer(comm->main_patient, patient_id, data->buffers_size, ad);
+    consume_end(sems->main_patient);
 }
 
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data, struct semaphores* sems) {
@@ -44,5 +46,7 @@ void patient_process_admission(struct admission* ad, int patient_id, struct data
 }
 
 void patient_send_admission(struct admission* ad, struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    produce_begin(sems->patient_receptionist);
     write_patient_receptionist_buffer(comm->patient_receptionist, data->buffers_size, ad);
+    produce_end(sems->patient_receptionist);
 }

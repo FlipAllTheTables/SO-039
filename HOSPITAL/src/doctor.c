@@ -32,7 +32,9 @@ void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_c
     if (*data->terminate == 1) {
         return;
     }
+    consume_begin(sems->receptionist_doctor);
     read_receptionist_doctor_buffer(comm->receptionist_doctor, doctor_id, data->buffers_size, ad);
+    consume_end(sems->receptionist_doctor);
 }
 
 void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data, struct semaphores* sems) {

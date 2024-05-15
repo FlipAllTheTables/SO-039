@@ -132,7 +132,9 @@ void user_interaction(struct data_container* data, struct communication* comm, s
         scanf("%s", user_input);
 
         if (strcmp(user_input, "ad") == 0) {
+            produce_begin(sems->main_patient);
             create_request(&ad_counter, data, comm, sems);
+            produce_end(sems->main_patient);
 
         } else if (strcmp(user_input, "info") == 0) {
             read_info(data, sems);
@@ -303,12 +305,11 @@ void print_status(struct data_container* data, struct semaphores* sems) {
 void end_execution(struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Por flag terminate da estrutura data para 1
     *data->terminate = 1;
+    wakeup_processes(data, sems);
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, comm);
     destroy_semaphores(sems);
-
-    puts("end_execution");
 }
 
 void wait_processes(struct data_container* data) {
