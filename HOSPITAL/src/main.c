@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
     comm->receptionist_doctor = allocate_dynamic_memory(sizeof(struct circular_buffer));
 
     // init semaphore data structure
-    struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
-    sems->main_patient = create_dynamic_memory(sizeof(struct prodcons));
-    sems->patient_receptionist = create_dynamic_memory(sizeof(struct prodcons));
-    sems->receptionist_doctor = create_dynamic_memory(sizeof(struct prodcons));
+    struct semaphores* sems = allocate_dynamic_memory(sizeof(struct semaphores));
+    sems->main_patient = allocate_dynamic_memory(sizeof(struct prodcons));
+    sems->patient_receptionist = allocate_dynamic_memory(sizeof(struct prodcons));
+    sems->receptionist_doctor = allocate_dynamic_memory(sizeof(struct prodcons));
 
     //execute main code
     main_args(argc, argv, data);
@@ -42,10 +42,10 @@ int main(int argc, char *argv[]) {
     deallocate_dynamic_memory(comm->patient_receptionist);
     deallocate_dynamic_memory(comm->receptionist_doctor);
     deallocate_dynamic_memory(comm);
-    destroy_dynamic_memory(sems->main_patient);
-    destroy_dynamic_memory(sems-> patient_receptionist);
-    destroy_dynamic_memory(sems-> receptionist_doctor);
-    destroy_dynamic_memory(sems);
+    allocate_dynamic_memory(sems->main_patient);
+    allocate_dynamic_memory(sems-> patient_receptionist);
+    allocate_dynamic_memory(sems-> receptionist_doctor);
+    allocate_dynamic_memory(sems);
 }
 
 void main_args(int argc, char* argv[], struct data_container* data) {
