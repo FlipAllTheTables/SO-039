@@ -26,7 +26,7 @@ void semaphore_destroy(char* name, sem_t* semaphore) {
         puts("Erro sem_close.");
         exit(1);
     }
-    if (sem_destroy(semaphore) == -1) {
+    if (sem_unlink(name) == -1) {
         puts("Erro sem_destroy.");
         exit(1);
     }
