@@ -23,35 +23,50 @@ void read_config_information(char* file_path, struct data_container* data) {
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter max_ads
-        data->max_ads = atoi(line);
+        if ((data->max_ads = atoi(line)) < 1) {
+            puts("max_ads tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de max_ads.");
         exit(1);
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter buffers_size
-        data->buffers_size = atoi(line);
+        if ((data->buffers_size = atoi(line)) < 1) {
+            puts("buffers_size tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de buffers_size.");
         exit(1);
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter n_patients
-        data->n_patients = atoi(line);
+        if ((data->n_patients = atoi(line)) < 1) {
+            puts("n_patients tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de n_patients.");
         exit(1);
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter n_receptionists
-        data->n_receptionists = atoi(line);
+        if ((data->n_receptionists = atoi(line)) < 1) {
+            puts("n_receptionist tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de n_receptionists.");
         exit(1);
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter n_doctors
-        data->n_doctors = atoi(line);
+        if ((data->n_doctors = atoi(line)) < 1) {
+            puts("n_doctors tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de n_doctors.");
         exit(1);
@@ -76,7 +91,10 @@ void read_config_information(char* file_path, struct data_container* data) {
     }
 
     if (fgets(line, MAXLINESIZE, config_file) != NULL) { // obter alarm_time
-        data->alarm_time = atoi(line);
+        if ((data->alarm_time = atoi(line)) < 1) {
+            puts("alarm_time tem de ser pelo menos 1.");
+            exit(1);
+        }
     } else {
         puts("Erro em obtenção de alarm_time.");
         exit(1);
