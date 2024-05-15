@@ -10,16 +10,16 @@
 #include "main.h"
 #include "memory.h"
 
-int execute_receptionist(int receptionist_id, struct data_container* data, struct communication* comm) {
+int execute_receptionist(int receptionist_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Memória alocada para uma admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
 
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
-        receptionist_receive_admission(ad, data, comm);
+        receptionist_receive_admission(ad, data, comm, sems);
         if (ad->id != -1) { // Verificar que id != -1
             printf("[Receptionist %d] Recebi a admissão %d!\n", receptionist_id, ad->id);
-            receptionist_process_admission(ad, receptionist_id, data);
-            receptionist_send_admission(ad, data, comm);
+            receptionist_process_admission(ad, receptionist_id, data, sems);
+            receptionist_send_admission(ad, data, comm, sems);
         }
     }
 
@@ -28,20 +28,20 @@ int execute_receptionist(int receptionist_id, struct data_container* data, struc
     return data->receptionist_stats[receptionist_id];
 }
 
-void receptionist_receive_admission(struct admission* ad, struct data_container* data, struct communication* comm) {
+void receptionist_receive_admission(struct admission* ad, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     if (*data->terminate == 1) {
         return;
     }
     read_patient_receptionist_buffer(comm->patient_receptionist, data->buffers_size, ad);
 }
 
-void receptionist_process_admission(struct admission* ad, int receptionist_id, struct data_container* data) {
+void receptionist_process_admission(struct admission* ad, int receptionist_id, struct data_container* data, struct semaphores* sems) {
     ad->receiving_receptionist = receptionist_id;
     ad->status = 'R';
     data->receptionist_stats[receptionist_id]++;
     data->results[ad->id] = *ad;
 }
 
-void receptionist_send_admission(struct admission* ad, struct data_container* data, struct communication* comm) {
+void receptionist_send_admission(struct admission* ad, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     write_receptionist_doctor_buffer(comm->receptionist_doctor, data->buffers_size, ad);
 }

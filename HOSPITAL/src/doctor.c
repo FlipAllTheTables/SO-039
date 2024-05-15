@@ -10,15 +10,15 @@
 #include "main.h"
 #include "memory.h"
 
-int execute_doctor(int doctor_id, struct data_container* data, struct communication* comm) {
+int execute_doctor(int doctor_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Memória alocada para uma admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
 
     while (*data->terminate != 1) { // Enquanto o utilizador não pedir para terminar o programa
-        doctor_receive_admission(ad, doctor_id, data, comm);
+        doctor_receive_admission(ad, doctor_id, data, comm, sems);
         if (ad->id != -1) {
             printf("[Doctor %d] Recebi a admissão %d!\n", doctor_id, ad->id);
-            doctor_process_admission(ad, doctor_id, data);
+            doctor_process_admission(ad, doctor_id, data, sems);
         }
     }
 
@@ -27,14 +27,14 @@ int execute_doctor(int doctor_id, struct data_container* data, struct communicat
     return data->doctor_stats[doctor_id];
 }
 
-void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_container* data, struct communication* comm) {
+void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     if (*data->terminate == 1) {
         return;
     }
     read_receptionist_doctor_buffer(comm->receptionist_doctor, doctor_id, data->buffers_size, ad);
 }
 
-void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data) {
+void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data, struct semaphores* sems) {
     ad->receiving_doctor = doctor_id;
     if (ad->id < data->max_ads) { // Se admissão não estiver acima do limite diário, incrementar contador e inserir estado 'A'
         ad->status = 'A';

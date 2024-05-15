@@ -13,6 +13,7 @@
 #include "main.h"
 #include "memory.h"
 #include "process.h"
+#include "synchronization.h"
 
 int main(int argc, char *argv[]) {
     //init data structures
@@ -105,19 +106,19 @@ void create_shared_memory_buffers(struct data_container* data, struct communicat
     comm->receptionist_doctor->ptrs = create_shared_memory(STR_SHM_RECEPT_DOCTOR_PTR, sizeof(struct pointers));
 }
 
-void launch_processes(struct data_container* data, struct communication* comm) {
+void launch_processes(struct data_container* data, struct communication* comm, struct semaphores* sems) {
     for (int i = 0; i < data->n_patients; i++) { // Iniciar N pacientes e guardar pids em data->patient_pids
-        data->patient_pids[i] = launch_patient(i, data, comm);
+        data->patient_pids[i] = launch_patient(i, data, comm, sems);
     }
     for (int i = 0; i < data->n_receptionists; i++) { // Iniciar N rececionistas e guardar pids em data->receptionists_pids
-        data->receptionist_pids[i] = launch_receptionist(i, data, comm);
+        data->receptionist_pids[i] = launch_receptionist(i, data, comm, sems);
     }
     for (int i = 0; i < data->n_doctors; i++) { // Iniciar N médicos e guardar pids em data->doctor_pids
-        data->doctor_pids[i] = launch_doctor(i, data, comm);
+        data->doctor_pids[i] = launch_doctor(i, data, comm, sems);
     }
 }
 
-void user_interaction(struct data_container* data, struct communication* comm) {
+void user_interaction(struct data_container* data, struct communication* comm, struct semaphores* sems) {
     int ad_counter = 0;
 
     // String que guarda o input do utilizador
@@ -138,13 +139,13 @@ void user_interaction(struct data_container* data, struct communication* comm) {
         scanf("%s", user_input);
 
         if (strcmp(user_input, "ad") == 0) {
-            create_request(&ad_counter, data, comm);
+            create_request(&ad_counter, data, comm, sems);
 
         } else if (strcmp(user_input, "info") == 0) {
-            read_info(data);
+            read_info(data, sems);
 
         } else if (strcmp(user_input, "status") == 0) {
-            print_status(data);
+            print_status(data, sems);
 
         } else if (strcmp(user_input, "help") == 0) {
             puts("[Main] Ações disponíveis:");
@@ -155,7 +156,7 @@ void user_interaction(struct data_container* data, struct communication* comm) {
             puts("[Main]  end - termina a executação de hOSpital\n");
 
         } else if (strcmp(user_input, "end") == 0) {
-            end_execution(data, comm);
+            end_execution(data, comm, sems);
             return;
 
         } else { // Comando mal formatado não existente
@@ -164,7 +165,7 @@ void user_interaction(struct data_container* data, struct communication* comm) {
     }
 }
 
-void create_request(int* ad_counter, struct data_container* data, struct communication* comm) {
+void create_request(int* ad_counter, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Obter valores de id de paciente e médico do comando "ad paciente médico"
     int patient_id, doctor_id;
     scanf("%d", &patient_id);
@@ -191,7 +192,7 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     }
 }
 
-void read_info(struct data_container* data) {
+void read_info(struct data_container* data, struct semaphores* sems) {
     // Obter valor de id da admissão pedida pelo utilizador
     int ad_id;
     scanf("%d", &ad_id);
@@ -225,7 +226,7 @@ void read_info(struct data_container* data) {
     printf("!\n");
 }
 
-void print_status(struct data_container* data) {
+void print_status(struct data_container* data, struct semaphores* sems) {
     // Imprimir número máximo de admissões e tamanho de buffers
     printf("[Main] max_ads: %d\n", data->max_ads);
     printf("[Main] buffers_size: %d\n", data->buffers_size);
@@ -306,7 +307,7 @@ void print_status(struct data_container* data) {
 
 }
 
-void end_execution(struct data_container* data, struct communication* comm) {
+void end_execution(struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Por flag terminate da estrutura data para 1
     *data->terminate = 1;
     wait_processes(data);
@@ -372,4 +373,58 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
     deallocate_dynamic_memory(data->receptionist_stats);
     deallocate_dynamic_memory(data->doctor_pids);
     deallocate_dynamic_memory(data->doctor_stats);
+}
+
+void create_semaphores(struct data_container* data, struct semaphores* sems) {
+    // Criar prodcon main_patient
+    sems->main_patient->full = semaphore_create(STR_SEM_MAIN_PATIENT_FULL, 0);
+    sems->main_patient->empty = semaphore_create(STR_SEM_MAIN_PATIENT_EMPTY, data->buffers_size);
+    sems->main_patient->mutex = semaphore_create(STR_SEM_MAIN_PATIENT_MUTEX, 1);
+
+    // Criar prodcon patient_receptionist
+    sems->patient_receptionist->full = semaphore_create(STR_SEM_PATIENT_RECEPT_FULL, 0);
+    sems->patient_receptionist->empty = semaphore_create(STR_SEM_PATIENT_RECEPT_EMPTY, data->buffers_size);
+    sems->patient_receptionist->mutex = semaphore_create(STR_SEM_PATIENT_RECEPT_MUTEX, 1);
+
+    // Criar prodcon receptionist_doctor
+    sems->receptionist_doctor->full = semaphore_create(STR_SEM_RECEPT_DOCTOR_FULL, 0);
+    sems->receptionist_doctor->empty = semaphore_create(STR_SEM_RECEPT_DOCTOR_EMPTY, data->buffers_size);
+    sems->receptionist_doctor->mutex = semaphore_create(STR_SEM_RECEPT_DOCTOR_MUTEX, 1);
+
+    // Criar semaphores mutex
+    sems->patient_stats_mutex = semaphore_create(STR_SEM_PATIENT_STATS_MUTEX, 1);
+    sems->receptionist_stats_mutex = semaphore_create(STR_SEM_RECEPT_STATS_MUTEX, 1);
+    sems->doctor_stats_mutex = semaphore_create(STR_SEM_DOCTOR_STATS_MUTEX, 1);
+    sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX, 1);
+    sems->terminate_mutex = semaphore_create(STR_SEM_TERMINATE_MUTEX, 1);
+}
+
+void wakeup_processes(struct data_container* data, struct semaphores* sems) {
+    produce_end(sems->main_patient);
+    produce_end(sems->patient_receptionist);
+    produce_end(sems->receptionist_doctor);
+}
+
+void destroy_semaphores(struct semaphores* sems) {
+    // Destruir prodcon main_patient
+    semaphore_destroy(STR_SEM_MAIN_PATIENT_FULL, sems->main_patient->full);
+    semaphore_destroy(STR_SEM_MAIN_PATIENT_EMPTY, sems->main_patient->empty);
+    semaphore_destroy(STR_SEM_MAIN_PATIENT_MUTEX, sems->main_patient->mutex);
+
+    // Destruir prodcon patient_receptionist
+    semaphore_destroy(STR_SEM_PATIENT_RECEPT_FULL, sems->patient_receptionist->full);
+    semaphore_destroy(STR_SEM_PATIENT_RECEPT_EMPTY, sems->patient_receptionist->empty);
+    semaphore_destroy(STR_SEM_PATIENT_RECEPT_MUTEX, sems->patient_receptionist->mutex);
+
+    // Destruir prodcon receptionist_doctor
+    semaphore_destroy(STR_SEM_RECEPT_DOCTOR_FULL, sems->receptionist_doctor->full);
+    semaphore_destroy(STR_SEM_RECEPT_DOCTOR_EMPTY, sems->receptionist_doctor->empty);
+    semaphore_destroy(STR_SEM_RECEPT_DOCTOR_MUTEX, sems->receptionist_doctor->mutex);
+
+    // Destruir semaphores mutex
+    semaphore_destroy(STR_SEM_PATIENT_STATS_MUTEX, sems->patient_stats_mutex);
+    semaphore_destroy(STR_SEM_RECEPT_STATS_MUTEX, sems->receptionist_stats_mutex);
+    semaphore_destroy(STR_SEM_DOCTOR_STATS_MUTEX, sems->doctor_stats_mutex);
+    semaphore_destroy(STR_SEM_RESULTS_MUTEX, sems->results_mutex);
+    semaphore_destroy(STR_SEM_TERMINATE_MUTEX, sems->terminate_mutex);
 }
