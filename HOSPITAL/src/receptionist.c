@@ -6,9 +6,10 @@
 
 #include <stdio.h>
 
-#include "receptionist.h"
 #include "main.h"
 #include "memory.h"
+#include "receptionist.h"
+#include "synchronization.h"
 
 int execute_receptionist(int receptionist_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Memória alocada para uma admissão

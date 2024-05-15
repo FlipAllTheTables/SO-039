@@ -313,6 +313,9 @@ void end_execution(struct data_container* data, struct communication* comm, stru
     wait_processes(data);
     write_statistics(data);
     destroy_memory_buffers(data, comm);
+    destroy_semaphores(sems);
+
+    puts("end_execution");
 }
 
 void wait_processes(struct data_container* data) {

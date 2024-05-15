@@ -9,6 +9,7 @@
 #include "doctor.h"
 #include "main.h"
 #include "memory.h"
+#include "synchronization.h"
 
 int execute_doctor(int doctor_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Memória alocada para uma admissão

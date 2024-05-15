@@ -10,12 +10,13 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#include "process.h"
-#include "memory.h"
-#include "main.h"
-#include "patient.h"
-#include "receptionist.h"
 #include "doctor.h"
+#include "main.h"
+#include "memory.h"
+#include "patient.h"
+#include "process.h"
+#include "receptionist.h"
+#include "synchronization.h"
 
 int launch_patient(int patient_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     int pd = fork();

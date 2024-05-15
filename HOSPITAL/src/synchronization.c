@@ -4,10 +4,10 @@
  * Francisco Santos - 59871
 */ 
 
+#include <fcntl.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <semaphore.h>
-#include <fcntl.h>
 
 #include "synchronization.h"
 
