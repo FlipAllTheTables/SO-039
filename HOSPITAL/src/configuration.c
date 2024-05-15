@@ -105,11 +105,6 @@ void read_config_information(char* file_path, struct data_container* data) {
         data->max_ads = MAX_RESULTS;
     }
 
-    printf("Configuração da estrutura data_container feita!\n");
-    printf("max_ads: %d\nbuffers_size: %d\nn_patients: %d\n", data->max_ads, data->buffers_size, data->n_patients);
-    printf("n_receptionists: %d\nn_doctors: %d\nlog_filename: %s\n", data->n_receptionists, data->n_doctors, data->log_filename);
-    printf("statistics_filename: %s\nalarm_time: %d\n", data->statistics_filename, data->alarm_time);
-
     // Fechar ficheiro de configuração;
     fclose(config_file);
 }

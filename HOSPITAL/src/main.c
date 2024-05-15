@@ -14,6 +14,7 @@
 #include "main.h"
 #include "memory.h"
 #include "process.h"
+#include "stats.h"
 #include "synchronization.h"
 
 int main(int argc, char *argv[]) {
@@ -328,20 +329,7 @@ void wait_processes(struct data_container* data) {
 }
 
 void write_statistics(struct data_container* data) {
-    // Escrever número de admissões requeridas por cada paciente
-    for (int i = 0; i < data->n_patients; i++) {
-        printf("[Main] O paciente %d requeriu %d admissões!\n", i, data->patient_stats[i]);
-    }
-
-    // Escrever número de admissões realizadas por cada rececionista
-    for (int i = 0; i < data->n_receptionists; i++) {
-        printf("[Main] O rececionista %d requeriu %d admissões!\n", i, data->receptionist_stats[i]);
-    }
-
-    // Escrever número de admissões atendidas por cada médico
-    for (int i = 0; i < data->n_doctors; i++) {
-        printf("[Main] O médico %d requeriu %d admissões!\n", i, data->doctor_stats[i]);
-    }
+    print_statistics(data);
 }
 
 void destroy_memory_buffers(struct data_container* data, struct communication* comm) {

@@ -7,7 +7,7 @@
 
 void print_statistics(struct data_container* data) {
 
-    // ficheiro de estatísticas
+    // Ficheiro de estatísticas
     FILE* stats_file;
     if ((stats_file = fopen(data->statistics_filename, "w")) == NULL) { // Verificar que ficheiro foi aberto corretamente
         puts("Erro em criação de ficheiro de estatísticas.");
@@ -25,6 +25,8 @@ void print_statistics(struct data_container* data) {
         }
     }
 
+    // Fechar ficheiro de estatísticas
+    fclose(stats_file);
 }
 
 void print_process_statistics(FILE* stats_file, struct data_container* data) {
