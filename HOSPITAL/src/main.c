@@ -61,17 +61,10 @@ void main_args(int argc, char* argv[], struct data_container* data) {
 }
 
 void allocate_dynamic_memory_buffers(struct data_container* data) {
-    // Alocar memória para pids e stats de pacientes
+    // Alocar memória para pids de pacientes, rececionistas e médicos
     data->patient_pids = allocate_dynamic_memory(data->n_patients * sizeof(int));
-    data->patient_stats = allocate_dynamic_memory(data->n_patients * sizeof(int));
-
-    // Alocar memória para pids e stats de rececionistas
     data->receptionist_pids = allocate_dynamic_memory(data->n_receptionists * sizeof(int));
-    data->receptionist_stats = allocate_dynamic_memory(data->n_receptionists * sizeof(int));
-
-    // Alocar memória para pids e stats de médicos
     data->doctor_pids = allocate_dynamic_memory(data->n_doctors * sizeof(int));
-    data->doctor_stats = allocate_dynamic_memory(data->n_doctors * sizeof(int));
 }
 
 void create_shared_memory_buffers(struct data_container* data, struct communication* comm) {
@@ -83,8 +76,12 @@ void create_shared_memory_buffers(struct data_container* data, struct communicat
     }
 
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
-
     *data->terminate = 0;
+
+    // Inicializar memória partilhada de stats
+    data->patient_stats = create_shared_memory(STR_SHM_PATIENT_STATS, data->n_patients * sizeof(int));
+    data->receptionist_stats = create_shared_memory(STR_SHM_RECEPT_STATS, data->n_receptionists * sizeof(int));
+    data->doctor_stats = create_shared_memory(STR_SHM_DOCTOR_STATS, data->n_doctors * sizeof(int));
 
     // Inicializar memória partilhada entre main e paciente
     comm->main_patient->buffer = create_shared_memory(STR_SHM_MAIN_PATIENT_BUFFER, data->buffers_size * sizeof(struct admission));
@@ -336,7 +333,7 @@ void write_statistics(struct data_container* data) {
 void destroy_memory_buffers(struct data_container* data, struct communication* comm) {
     // TODO usar getuid()
 
-    // Destroir memória partilhada da estrutura communication
+    // Destruir memória partilhada da estrutura communication
     destroy_shared_memory(STR_SHM_MAIN_PATIENT_BUFFER, comm->main_patient->buffer, data->buffers_size * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_MAIN_PATIENT_PTR, comm->main_patient->ptrs, sizeof(struct pointers));
 
@@ -346,17 +343,17 @@ void destroy_memory_buffers(struct data_container* data, struct communication* c
     destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_BUFFER, comm->receptionist_doctor->buffer, data->buffers_size * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_RECEPT_DOCTOR_PTR, comm->receptionist_doctor->ptrs, sizeof(struct pointers));
 
-    // Destroir memória partilhada da estrutura data_container
-    destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct admission));
+    // Destruir memória partilhada da estrutura data_container
+    destroy_shared_memory(STR_SHM_RESULTS, data->results, data->max_ads * sizeof(struct admission));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+    destroy_shared_memory(STR_SHM_PATIENT_STATS, data->patient_stats, data->n_patients * sizeof(int));
+    destroy_shared_memory(STR_SHM_RECEPT_STATS, data->receptionist_stats, data->n_receptionists * sizeof(int));
+    destroy_shared_memory(STR_SHM_DOCTOR_STATS, data->doctor_stats, data->n_doctors * sizeof(int));
 
     // Libertar memória dinâmica alocada na estrutura data_container
     deallocate_dynamic_memory(data->patient_pids);
-    deallocate_dynamic_memory(data->patient_stats);
     deallocate_dynamic_memory(data->receptionist_pids);
-    deallocate_dynamic_memory(data->receptionist_stats);
     deallocate_dynamic_memory(data->doctor_pids);
-    deallocate_dynamic_memory(data->doctor_stats);
 }
 
 void create_semaphores(struct data_container* data, struct semaphores* sems) {
