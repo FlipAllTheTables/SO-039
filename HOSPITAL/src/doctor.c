@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "doctor.h"
+#include "hosptime.h"
 #include "main.h"
 #include "memory.h"
 #include "synchronization.h"
@@ -38,6 +39,7 @@ void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_c
 }
 
 void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data, struct semaphores* sems) {
+    ad->doctor_time = get_time();
     ad->receiving_doctor = doctor_id;
     if (ad->id < data->max_ads) { // Se admissão não estiver acima do limite diário, incrementar contador e inserir estado 'A'
         ad->status = 'A';

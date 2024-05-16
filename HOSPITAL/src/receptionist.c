@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include "hosptime.h"
 #include "main.h"
 #include "memory.h"
 #include "receptionist.h"
@@ -39,6 +40,7 @@ void receptionist_receive_admission(struct admission* ad, struct data_container*
 }
 
 void receptionist_process_admission(struct admission* ad, int receptionist_id, struct data_container* data, struct semaphores* sems) {
+    ad->receptionist_time = get_time();
     ad->receiving_receptionist = receptionist_id;
     ad->status = 'R';
     data->receptionist_stats[receptionist_id]++;

@@ -11,6 +11,7 @@
 #include <sys/types.h>
 
 #include "configuration.h"
+#include "hosptime.h"
 #include "main.h"
 #include "memory.h"
 #include "process.h"
@@ -170,6 +171,7 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
         ad->requesting_patient = patient_id;
         ad->requested_doctor = doctor_id;
         ad->status = 'M'; // Estado inicial de uma admissão criada por Main
+        ad->create_time = get_time();
 
         // Escrever admissão na memória partilhada entre main e paciente
         write_main_patient_buffer(comm->main_patient, data->buffers_size, ad);
