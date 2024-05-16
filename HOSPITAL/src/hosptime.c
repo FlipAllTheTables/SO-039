@@ -5,7 +5,7 @@
 #include "hosptime.h"
 #include "memory.h"
 
-struct timespec get_time() {
+struct timespec get_timespec() {
     // Registo de tempo
     struct timespec time;
 

@@ -40,7 +40,7 @@ void patient_receive_admission(struct admission* ad, int patient_id, struct data
 }
 
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data, struct semaphores* sems) {
-    ad->patient_time = get_time();
+    ad->patient_time = get_timespec();
     ad->receiving_patient = patient_id;
     ad->status = 'P';
     data->patient_stats[patient_id]++;
