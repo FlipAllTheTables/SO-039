@@ -1,3 +1,9 @@
+/*  Grupo 039
+ * Rafael Ribeiro   - 58193
+ * Pedro Duque      - 52753
+ * Francisco Santos - 59871
+*/ 
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,12 +76,12 @@ void print_admission_statistics(FILE* stats_file, struct admission* ad) {
     fputs("\n", stats_file);
 }
 
-void print_time_value(FILE* stats_file, struct timespec time) {
+void print_time_value(FILE* stats_file, struct timespec current_time) {
     // String que guarda o formato dia/mês/ano_hora:minuto:segundo
     char time_string[128];
     struct tm* time_format;
 
-    time_format = localtime(&time.tv_sec);
+    time_format = localtime(&current_time.tv_sec);
     strftime(time_string, 128, "%d/%m/%Y_%H:%M:%S", time_format);
-    fprintf(stats_file, "%s.%.3ld\n", time_string, time.tv_nsec / 1000000);
+    fprintf(stats_file, "%s.%.3ld\n", time_string, current_time.tv_nsec / 1000000);
 }

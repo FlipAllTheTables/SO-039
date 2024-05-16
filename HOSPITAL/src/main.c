@@ -12,6 +12,7 @@
 
 #include "configuration.h"
 #include "hosptime.h"
+#include "log.h"
 #include "main.h"
 #include "memory.h"
 #include "process.h"
@@ -141,6 +142,7 @@ void user_interaction(struct data_container* data, struct communication* comm, s
             print_status(data, sems);
 
         } else if (strcmp(user_input, "help") == 0) {
+            log_help(data);
             puts("[Main] Ações disponíveis:");
             puts("[Main]  ad paciente médico - criar uma nova admissão");
             puts("[Main]  info id - consultar o estado de duma admissão");
@@ -163,6 +165,7 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     int patient_id, doctor_id;
     scanf("%d", &patient_id);
     scanf("%d", &doctor_id);
+    log_ad(data, patient_id, doctor_id);
     if (*ad_counter < data->max_ads) { // Verificar que ainda pode ser criada uma admissão
         printf("[Main] A criar a admissão %d para o paciente %d destinada ao médico %d!\n", *ad_counter, patient_id, doctor_id);
         // Inicializar admissão
@@ -190,7 +193,7 @@ void read_info(struct data_container* data, struct semaphores* sems) {
     // Obter valor de id da admissão pedida pelo utilizador
     int ad_id;
     scanf("%d", &ad_id);
-
+    log_info(data, ad_id);
     // Imprimir mensagem de estado na consola. Mensagem diferente dependendo do estado da admissão
     if (ad_id < data->max_ads) {
         if (data->results[ad_id].id == ad_id) {
@@ -221,6 +224,8 @@ void read_info(struct data_container* data, struct semaphores* sems) {
 }
 
 void print_status(struct data_container* data, struct semaphores* sems) {
+    log_status(data);
+
     // Imprimir número máximo de admissões e tamanho de buffers
     printf("[Main] max_ads: %d\n", data->max_ads);
     printf("[Main] buffers_size: %d\n", data->buffers_size);
@@ -302,6 +307,8 @@ void print_status(struct data_container* data, struct semaphores* sems) {
 }
 
 void end_execution(struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    log_end(data);
+
     // Por flag terminate da estrutura data para 1
     *data->terminate = 1;
     wakeup_processes(data, sems);
