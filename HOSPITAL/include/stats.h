@@ -6,6 +6,8 @@
 #ifndef STATS_H_GUARD
 #define STATS_H_GUARD
 
+#include <time.h>
+
 #include "main.h"
 #include "memory.h"
 
@@ -24,5 +26,10 @@ void print_process_statistics(FILE* stats_file, struct data_container* data);
 * estatísticas dessa admissão para o ficheiro de estatísticas
 */
 void print_admission_statistics(FILE* stats_file, struct admission* ad);
+
+/* Função que recebe o ficheiro de estatísticas e uma estutura timespec e escreve o tempo no
+* formato dia/mês/ano_hora/minuto/segundo.milisegundos para o ficheiro de estatísticas
+*/
+void print_time_value(FILE* stats_file, struct timespec time);
 
 #endif
