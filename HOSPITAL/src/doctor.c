@@ -35,7 +35,12 @@ void doctor_receive_admission(struct admission* ad, int doctor_id, struct data_c
     }
     consume_begin(sems->receptionist_doctor);
     read_receptionist_doctor_buffer(comm->receptionist_doctor, doctor_id, data->buffers_size, ad);
-    consume_end(sems->receptionist_doctor);
+    if (ad->id == -1) { // Se id for inválido, por prodcon receptionist_doctor de volta como estava no início da operação
+        // Função produce_end faz post nos semáforos em que se fez wait na função consume_being
+        produce_end(sems->receptionist_doctor);
+    } else { // Se id for válido, fazer consume_end ao prodcon receptionist_doctor
+        consume_end(sems->receptionist_doctor);
+    }
 }
 
 void doctor_process_admission(struct admission* ad, int doctor_id, struct data_container* data, struct semaphores* sems) {

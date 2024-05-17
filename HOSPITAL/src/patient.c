@@ -36,7 +36,12 @@ void patient_receive_admission(struct admission* ad, int patient_id, struct data
     }
     consume_begin(sems->main_patient);
     read_main_patient_buffer(comm->main_patient, patient_id, data->buffers_size, ad);
-    consume_end(sems->main_patient);
+    if (ad->id == -1) { // Se id for válido, por prodcon main_patient de volta como estava no início da operação
+        // Função produce_end faz post nos semáforos em que se fez wait na função consume_being
+        produce_end(sems->main_patient);
+    } else { // Se id for válido, fazer consume_end ao prodcon main_patient
+        consume_end(sems->main_patient);
+    }
 }
 
 void patient_process_admission(struct admission* ad, int patient_id, struct data_container* data, struct semaphores* sems) {

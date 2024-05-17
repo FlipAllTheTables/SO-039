@@ -60,6 +60,14 @@ void main_args(int argc, char* argv[], struct data_container* data) {
     }
     // Inserir argumentos na strutura data_container
     read_config_information(argv[1], data);
+
+    // Apagar conteúdos do ficheiro log, se este existir
+    FILE* log_file;
+    if ((log_file = fopen(data->log_filename, "w")) == NULL) {
+        puts("Erro em criação de ficheiro log");
+        exit(1);
+    }
+    fclose(log_file);
 }
 
 void allocate_dynamic_memory_buffers(struct data_container* data) {
