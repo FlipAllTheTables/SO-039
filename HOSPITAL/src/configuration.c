@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "configuration.h"
-#include "main.h"
 
 void read_config_information(char* file_path, struct data_container* data) {
     // Valor máximo de caracteres por linha no ficheiro de configuração

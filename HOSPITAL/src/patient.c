@@ -8,9 +8,6 @@
 
 #include "hosptime.h"
 #include "patient.h"
-#include "main.h"
-#include "memory.h"  
-#include "synchronization.h"
 
 int execute_patient(int patient_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
     // Memória alocada para uma admissão

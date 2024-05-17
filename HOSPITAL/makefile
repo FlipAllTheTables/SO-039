@@ -10,16 +10,16 @@ INC_DIR = include
 OBJ_DIR = obj
 SRC_DIR = src
 
-configuration.o = configuration.h main.h
-doctor.o = doctor.h main.h memory.h synchronization.h
+configuration.o = configuration.h
+doctor.o = doctor.h synchronization.h
 hosptime.o = hosptime.h memory.h
-log.o = hosptime.h log.h main.h
-main.o = configuration.h hosptime.h log.h main.h memory.h process.h stats.h synchronization.h
+log.o = hosptime.h log.h
+main.o = configuration.h hosptime.h log.h main.h process.h stats.h
 memory.o = memory.h
-patient.o = main.h memory.h patient.h synchronization.h
-process.o = doctor.h main.h memory.h patient.h process.h receptionist.h
-receptionist.o = main.h memory.h receptionist.h synchronization.h
-stats.o = main.h memory.h stats.h
+patient.o = hosptime.h patient.h
+process.o = doctor.h patient.h process.h receptionist.h
+receptionist.o = hosptime.h receptionist.h
+stats.o = stats.h
 synchronization.o = synchronization.h
 
 CFLAGS = -Wall -I $(INC_DIR) -g

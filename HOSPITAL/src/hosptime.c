@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "hosptime.h"
 #include "memory.h"

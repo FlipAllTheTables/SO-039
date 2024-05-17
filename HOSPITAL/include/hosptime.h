@@ -8,8 +8,6 @@
 
 #include <time.h>
 
-#include "memory.h"
-
 /* Função que retorna uma estrutura timespec a partir da função clock_gettime
 * com o clock real time
 */

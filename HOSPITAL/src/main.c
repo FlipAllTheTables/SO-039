@@ -14,10 +14,8 @@
 #include "hosptime.h"
 #include "log.h"
 #include "main.h"
-#include "memory.h"
 #include "process.h"
 #include "stats.h"
-#include "synchronization.h"
 
 int main(int argc, char *argv[]) {
     //init data structures

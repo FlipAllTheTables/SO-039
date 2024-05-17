@@ -6,8 +6,6 @@
 #ifndef LOG_H_GUARD
 #define LOG_H_GUARD
 
-#include <stdio.h>
-
 #include "main.h"
 
 /* Função que recebe a estrutura data_container, abre/cria o ficheiro de log com

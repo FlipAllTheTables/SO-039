@@ -9,7 +9,6 @@
 
 #include "hosptime.h"
 #include "log.h"
-#include "main.h"
 
 void log_ad(struct data_container* data, int patient_id, int doctor_id) {
     // Ficheiro de log

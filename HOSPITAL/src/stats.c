@@ -8,8 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "main.h"
-#include "memory.h"
 #include "stats.h"
 
 void print_statistics(struct data_container* data) {
