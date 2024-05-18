@@ -6,15 +6,27 @@ Este projeto foi desenvolvido por:
 Como executar:
     1 - Entrar num terminal, e seguir para a pasta HOSPITAL
     2 - Inserir o comando $make
-    3 - Executar o executável hOSpital gerado dentro da pasta bin
-        3.1 - $./bin/hOSpital max_consultas buffers_size n_patients n_rececionists n_doctors 
+    3 - Criar um ficheiro de configuração que será passado como argumento
+        O ficheiro tem o seguinte formato:
+            max_ads                 //nº máximo de admissões
+            buffers_size            //tamanho dos buffers
+            n_patients              //nº de pacientes
+            n_receptionists         //nº de rececionistas
+            n_doctors               //nº de médicos
+            log_filename            //nome do ficheiro de log
+            statistics_filename     //nome do ficheiro de estatísticas
+            alarm_time              //temporização para o alarme
+
+    4 - Executar o executável hOSpital gerado dentro da pasta bin
+        4.1 - $./bin/hOSpital config_filepath
             ou
-        3.2 - $cd bin seguido de $./hOSpital max_consultas buffers_size n_patients n_rececionists n_doctors
-    4 - Inserir os comandos detalhados no terminal de acordo com o que o utilizador deseja
-    5 - Inserir "end" para terminar executação e ver um relatório final
-    6 - Voltar para a pasta HOSPITAL (se for seguido o passo 3.2) com o comando $cd ..
-    7 - Inserir o comando $make clean para apagar os ficheiros gerados com o comando $make
+        4.2 - $cd bin seguido de $./hOSpital config_filepath
+    5 - Inserir os comandos detalhados no terminal de acordo com o que o utilizador deseja
+    6 - Verificar que cada operação válida é escrita no ficheiro log
+    7 - Inserir "end" ou Ctrl+C para terminar executação de hOSpital
+    8 - Verificar resultados finais da executação de hOSpital no ficheiro de estatísticas
+    9 - Voltar para a pasta HOSPITAL (se for seguido o passo 3.2) com o comando $cd ..
+    10 - Inserir o comando $make clean para apagar os ficheiros gerados com o comando $make
 
 Limitações de implementação:
-    O comando "status" não mostra as estatisticas verdadeiras dos participantes, mostrando sempre 0.
-    No entanto, os valores reais aparecem no relatório final com o comando "end".
+Esta implementação implementa todo o que é pedido, sem limitações.
