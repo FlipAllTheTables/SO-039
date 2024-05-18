@@ -271,44 +271,54 @@ void print_status(struct data_container* data, struct semaphores* sems) {
 
     // Imprimir arrays de stats de pacientes, rececionistas e médicos no formato pedido
     printf("[Main] patient_stats: [");
+    semaphore_lock(sems->patient_stats_mutex);
     for (int i = 0; i < data->n_patients; i++) {
         printf("%d", data->patient_stats[i]);
         if (i < data->n_patients - 1) {
             printf(", ");
         }
     }
+    semaphore_unlock(sems->patient_stats_mutex);
     printf("]\n");
 
     printf("[Main] receptionist_stats: [");
+    semaphore_lock(sems->receptionist_stats_mutex);
     for (int i = 0; i < data->n_receptionists; i++) {
         printf("%d", data->receptionist_stats[i]);
         if (i < data->n_receptionists - 1) {
             printf(", ");
         }
     }
+    semaphore_unlock(sems->receptionist_stats_mutex);
     printf("]\n");
 
     printf("[Main] doctor_stats [");
+    semaphore_lock(sems->doctor_stats_mutex);
     for (int i = 0; i < data->n_doctors; i++) {
         printf("%d", data->doctor_stats[i]);
         if (i < data->n_doctors - 1) {
             printf(", ");
         }
     }
+    semaphore_unlock(sems->doctor_stats_mutex);
     printf("]\n");
 
     // Imprimir array de IDs de admissões
     printf("[Main] results: [");
+    semaphore_lock(sems->results_mutex);
     for (int i = 0; i < data->max_ads; i++) {
         printf("%d", data->results[i].id);
         if (i < data->max_ads - 1) {
             printf(", ");
         }
     }
+    semaphore_unlock(sems->results_mutex);
     printf("]\n");
 
     // Imprimir estado terminate
+    semaphore_lock(sems->terminate_mutex);
     printf("[Main] terminate: %d\n\n", *data->terminate);
+    semaphore_unlock(sems->terminate_mutex);
 
 }
 
@@ -316,7 +326,9 @@ void end_execution(struct data_container* data, struct communication* comm, stru
     log_end(data);
 
     // Por flag terminate da estrutura data para 1
+    semaphore_lock(sems->terminate_mutex);
     *data->terminate = 1;
+    semaphore_unlock(sems->terminate_mutex);
     wakeup_processes(data, sems);
     wait_processes(data);
     write_statistics(data);

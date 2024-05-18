@@ -45,9 +45,13 @@ void doctor_process_admission(struct admission* ad, int doctor_id, struct data_c
     ad->receiving_doctor = doctor_id;
     if (ad->id < data->max_ads) { // Se admissão não estiver acima do limite diário, incrementar contador e inserir estado 'A'
         ad->status = 'A';
+        semaphore_lock(sems->doctor_stats_mutex);
         data->doctor_stats[doctor_id]++;
+        semaphore_unlock(sems->doctor_stats_mutex);
+        semaphore_lock(sems->results_mutex);
+        data->results[ad->id] = *ad;
+        semaphore_unlock(sems->results_mutex);
     } else { // Caso contrário inserir estado N e não incrementar contador
         ad->status = 'N';
     }
-    data->results[ad->id] = *ad;
 }
