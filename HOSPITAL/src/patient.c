@@ -6,10 +6,14 @@
 
 #include <stdio.h>
 
+#include "hospsignal.h"
 #include "hosptime.h"
 #include "patient.h"
 
 int execute_patient(int patient_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    // Definir qualquer processo "paciente" para ignorar o sinal SIGINT
+    signal_ignore();
+
     // Memória alocada para uma admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
 

@@ -7,9 +7,13 @@
 #include <stdio.h>
 
 #include "doctor.h"
+#include "hospsignal.h"
 #include "hosptime.h"
 
 int execute_doctor(int doctor_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    // Definir qualquer processo "médico" para ignorar o sinal SIGINT
+    signal_ignore();
+
     // Memória alocada para uma admissão
     struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
 

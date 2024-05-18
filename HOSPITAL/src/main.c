@@ -11,22 +11,27 @@
 #include <sys/types.h>
 
 #include "configuration.h"
+#include "hospsignal.h"
 #include "hosptime.h"
 #include "log.h"
 #include "main.h"
 #include "process.h"
 #include "stats.h"
 
+struct data_container* data;
+struct communication* comm;
+struct semaphores* sems;
+
 int main(int argc, char *argv[]) {
     //init data structures
-    struct data_container* data = allocate_dynamic_memory(sizeof(struct data_container));
-    struct communication* comm = allocate_dynamic_memory(sizeof(struct communication));
+    data = allocate_dynamic_memory(sizeof(struct data_container));
+    comm = allocate_dynamic_memory(sizeof(struct communication));
     comm->main_patient = allocate_dynamic_memory(sizeof(struct circular_buffer));
     comm->patient_receptionist = allocate_dynamic_memory(sizeof(struct rnd_access_buffer));
     comm->receptionist_doctor = allocate_dynamic_memory(sizeof(struct circular_buffer));
 
     // init semaphore data structure
-    struct semaphores* sems = allocate_dynamic_memory(sizeof(struct semaphores));
+    sems = allocate_dynamic_memory(sizeof(struct semaphores));
     sems->main_patient = allocate_dynamic_memory(sizeof(struct prodcons));
     sems->patient_receptionist = allocate_dynamic_memory(sizeof(struct prodcons));
     sems->receptionist_doctor = allocate_dynamic_memory(sizeof(struct prodcons));
@@ -66,6 +71,9 @@ void main_args(int argc, char* argv[], struct data_container* data) {
         exit(1);
     }
     fclose(log_file);
+
+    // Definir o comportamento do processo main quando é lançado o sinal SIGINT
+    set_sigint();
 }
 
 void allocate_dynamic_memory_buffers(struct data_container* data) {
