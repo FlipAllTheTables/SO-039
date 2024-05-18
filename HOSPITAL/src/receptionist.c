@@ -32,9 +32,13 @@ int execute_receptionist(int receptionist_id, struct data_container* data, struc
 }
 
 void receptionist_receive_admission(struct admission* ad, struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    semaphore_lock(sems->terminate_mutex);
     if (*data->terminate == 1) {
+        ad->id = -1;
+        semaphore_unlock(sems->terminate_mutex);
         return;
     }
+    semaphore_unlock(sems->terminate_mutex);
     consume_begin(sems->patient_receptionist);
     read_patient_receptionist_buffer(comm->patient_receptionist, data->buffers_size, ad);
     if (ad->id == -1) { // Se id for inválido, por prodcon patient_receptionist de volta como estava no início da operação

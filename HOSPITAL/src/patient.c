@@ -32,9 +32,13 @@ int execute_patient(int patient_id, struct data_container* data, struct communic
 }
 
 void patient_receive_admission(struct admission* ad, int patient_id, struct data_container* data, struct communication* comm, struct semaphores* sems) {
+    semaphore_lock(sems->terminate_mutex);
     if (*data->terminate == 1) {
+        ad->id = -1;
+        semaphore_unlock(sems->terminate_mutex);
         return;
     }
+    semaphore_unlock(sems->terminate_mutex);
     consume_begin(sems->main_patient);
     read_main_patient_buffer(comm->main_patient, patient_id, data->buffers_size, ad);
     if (ad->id == -1) { // Se id for válido, por prodcon main_patient de volta como estava no início da operação
