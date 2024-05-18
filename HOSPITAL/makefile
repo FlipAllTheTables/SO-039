@@ -3,7 +3,7 @@
 # Pedro Duque		- 52753
 # Francisco Santos	- 59871
 
-OBJECTS = configuration.o doctor.o hosptime.o log.o main.o memory.o patient.o process.o receptionist.o stats.o synchronization.o
+OBJECTS = configuration.o doctor.o hospsignal.o hosptime.o log.o main.o memory.o patient.o process.o receptionist.o stats.o synchronization.o
 
 BIN_DIR = bin
 INC_DIR = include
@@ -11,14 +11,15 @@ OBJ_DIR = obj
 SRC_DIR = src
 
 configuration.o = configuration.h
-doctor.o = doctor.h synchronization.h
+doctor.o = doctor.h hospsignal.h synchronization.h
+hospsignal.o = hospsignal.h main.h
 hosptime.o = hosptime.h memory.h
 log.o = hosptime.h log.h
-main.o = configuration.h hosptime.h log.h main.h process.h stats.h
+main.o = configuration.h hospsignal.h hosptime.h log.h main.h process.h stats.h
 memory.o = memory.h
-patient.o = hosptime.h patient.h
+patient.o = hospsignal.h hosptime.h patient.h
 process.o = doctor.h patient.h process.h receptionist.h
-receptionist.o = hosptime.h receptionist.h
+receptionist.o = hospsignal.h hosptime.h receptionist.h
 stats.o = stats.h
 synchronization.o = synchronization.h
 
