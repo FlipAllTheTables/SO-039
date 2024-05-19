@@ -181,7 +181,11 @@ void create_request(int* ad_counter, struct data_container* data, struct communi
     scanf("%d", &patient_id);
     scanf("%d", &doctor_id);
     log_ad(data, patient_id, doctor_id);
-    if (*ad_counter < data->max_ads) { // Verificar que ainda pode ser criada uma admissão
+    if (patient_id >= data->n_patients) {
+        printf("[Main] Paciente pedido não existe (ID %d é maior ou igual ao número de pacientes %d)\n", patient_id, data->n_patients);
+    } else if (doctor_id >= data->n_doctors) {
+        printf("[Main] Médico pedido não existe (ID %d é maior ou igual ao número de médicos %d)\n", doctor_id, data->n_doctors);
+    } else if (*ad_counter < data->max_ads) { // Verificar que ainda pode ser criada uma admissão
         printf("[Main] A criar a admissão %d para o paciente %d destinada ao médico %d!\n", *ad_counter, patient_id, doctor_id);
         // Inicializar admissão
         struct admission* ad = allocate_dynamic_memory(sizeof(struct admission));
