@@ -17,16 +17,14 @@ Como executar:
             statistics_filename     //nome do ficheiro de estatísticas
             alarm_time              //temporização para o alarme
 
-    4 - Executar o executável hOSpital gerado dentro da pasta bin
-        4.1 - $./bin/hOSpital config_filepath
-            ou
-        4.2 - $cd bin seguido de $./hOSpital config_filepath
-    5 - Inserir os comandos detalhados no terminal de acordo com o que o utilizador deseja
+    4 - Executar o executável hOSpital com o comando $./bin/hOSpital config_file
+    5 - Inserir comandos no terminal de acordo com o que o utilizador deseja
     6 - Verificar que cada operação válida é escrita no ficheiro log
     7 - Inserir "end" ou Ctrl+C para terminar executação de hOSpital
-    8 - Verificar resultados finais da executação de hOSpital no ficheiro de estatísticas
-    9 - Voltar para a pasta HOSPITAL (se for seguido o passo 3.2) com o comando $cd ..
-    10 - Inserir o comando $make clean para apagar os ficheiros gerados com o comando $make
+    8 - Verificar resultados finais da executação de hOSpital no ficheiro stats
+    9 - Inserir o comando $make clean para apagar os ficheiros gerados com o comando $make
 
 Limitações de implementação:
-Esta implementação implementa todo o que é pedido, sem limitações.
+    Esta implementação não permite a criação de admissões para além do limite decidido pela váriavel "max_ads".
+    Sendo assim, não é possível que uma admissão acabe com o estado 'N', pois este estado apenas acontece se a admissão
+    ultrapassar o limite definido.
