@@ -72,8 +72,9 @@ void main_args(int argc, char* argv[], struct data_container* data) {
     }
     fclose(log_file);
 
-    // Definir o comportamento do processo main quando é lançado o sinal SIGINT
+    // Definir o comportamento do processo main quando é lançado o sinal SIGINT e SIGALRM
     set_sigint();
+    set_alarm();
 }
 
 void allocate_dynamic_memory_buffers(struct data_container* data) {

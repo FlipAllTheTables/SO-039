@@ -52,24 +52,33 @@ void print_process_statistics(FILE* stats_file, struct data_container* data) {
 void print_admission_statistics(FILE* stats_file, struct admission* ad) {
     fprintf(stats_file, "Admission: %d\n", ad->id);
     fprintf(stats_file, "Status: %c\n", ad->status);
-    fprintf(stats_file, "Patient id: %d\n", ad->receiving_patient);
-    fprintf(stats_file, "Receptionist id: %d\n", ad->receiving_receptionist);
-    fprintf(stats_file, "Doctor id: %d\n", ad->receiving_doctor);
+    if (ad->status != 'M') {
+        fprintf(stats_file, "Patient id: %d\n", ad->receiving_patient);
+        if (ad->status != 'P') {
+            fprintf(stats_file, "Receptionist id: %d\n", ad->receiving_receptionist);
+            if (ad->status != 'R') {
+                fprintf(stats_file, "Doctor id: %d\n", ad->receiving_doctor);
+            }
+        }
+    }
 
     fputs("Start time: ", stats_file);
     print_time_value(stats_file, ad->create_time);
+    if (ad->status != 'M') {
+        fputs("Patient time: ", stats_file);
+        print_time_value(stats_file, ad->patient_time);
+        if (ad->status != 'P') {
+            fputs("Receptionist time: ", stats_file);
+            print_time_value(stats_file, ad->receptionist_time);
+            if (ad->status != 'R') {
+                fputs("Doctor time: ", stats_file);
+                print_time_value(stats_file, ad->doctor_time);
 
-    fputs("Patient time: ", stats_file);
-    print_time_value(stats_file, ad->patient_time);
-
-    fputs("Receptionist time: ", stats_file);
-    print_time_value(stats_file, ad->receptionist_time);
-
-    fputs("Doctor time: ", stats_file);
-    print_time_value(stats_file, ad->doctor_time);
-
-    fprintf(stats_file, "Total time: %.3lf\n", 
-    ad->doctor_time.tv_sec + (ad->doctor_time.tv_nsec / 1000000000.0)-(ad->create_time.tv_sec + (ad->create_time.tv_nsec / 1000000000.0)));
+                fprintf(stats_file, "Total time: %.3lf\n", 
+                ad->doctor_time.tv_sec + (ad->doctor_time.tv_nsec / 1000000000.0)-(ad->create_time.tv_sec + (ad->create_time.tv_nsec / 1000000000.0)));
+            }
+        }
+    }
 
     fputs("\n", stats_file);
 }
