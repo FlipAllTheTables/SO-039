@@ -11,8 +11,8 @@ OBJ_DIR = obj
 SRC_DIR = src
 
 configuration.o = configuration.h
-doctor.o = doctor.h hospsignal.h synchronization.h
-hospsignal.o = hospsignal.h main.h
+doctor.o = doctor.h hospsignal.h hosptime.h
+hospsignal.o = hospsignal.h main.h synchronization.h
 hosptime.o = hosptime.h memory.h
 log.o = hosptime.h log.h
 main.o = configuration.h hospsignal.h hosptime.h log.h main.h process.h stats.h
